@@ -1,43 +1,53 @@
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// WBS 3.1 플레이어 이동(WASD·점프, IN-01) + 3.2 플레이어 시점(1인칭·고정 에임, UI-07)
+/// WBS 3.1 플레이어 이동(WASD, 점프)
+/// WBS 3.2 플레이어 시점(1인칭, 고정 에임)
 ///
-/// 사용법: Player 오브젝트에 붙이고 Inspector에서 참조 3개를 연결합니다.
-/// 주의: Player의 피벗(transform.position)은 "발 위치"입니다. (높이 판정·접지 판정이 발 기준이라서)
+/// Player 오브젝트에 부착
+/// Camera Pivot, Ground Mask를 Inspector에서 연결
+/// Player Transform은 발 위치 기준
 /// </summary>
+
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
     [Header("참조")]
-    [SerializeField] private Transform cameraPivot;   // 카메라가 들어있는 눈 높이 오브젝트
-    [SerializeField] private Transform groundCheck;   // 발 위치(Player 바닥)에 둔 빈 오브젝트
-    [SerializeField] private LayerMask groundMask;    // Ground 레이어 (바닥·발판 전부 포함)
+    [SerializeField] private Transform cameraPivot;
+    [SerializeField] private LayerMask groundMask;
 
     [Header("이동")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpHeight = 1.5f;
     [SerializeField] private float gravity = -20f;
+
     [Range(0f, 1f)]
-    [SerializeField] private float airControl = 1f;   // 공중 이동 배율 (낙하 중에도 WASD 허용)
+    [SerializeField] private float airControl = 1f;
 
     [Header("접지 판정")]
-    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private float groundCheckRadius = 0.1f;
+    [SerializeField] private float groundCheckDistance = 0.08f;
+
+    [SerializeField] private bool logGroundState = true;
 
     [Header("시점")]
-    [SerializeField] private float mouseSensitivity = 0.1f;  // 나중에 설정 화면(UI-08)과 연결
+    [SerializeField] private float mouseSensitivity = 0.1f;
     [SerializeField] private float maxLookAngle = 85f;
 
-    // 다른 스크립트(낙하 판정, 높이 도달 판정, 메뉴 등)에서 읽거나 제어할 값들
-    public bool InputEnabled { get; set; } = true;      // 메뉴·I/E 창이 열리면 false
+    // 외부 스크립트에서 접근
+    public bool InputEnabled { get; set; } = true;
     public bool IsGrounded { get; private set; }
-    public float GroundedTime { get; private set; }     // 접지 유지 시간 (높이 도달 판정의 0.1초 조건용)
-    public float FootHeight => transform.position.y;    // 발 위치 높이
+    public float GroundedTime { get; private set; }
+    public float FootHeight => transform.position.y;
 
     private CharacterController cc;
+
     private float verticalVelocity;
     private float xRotation;
+
+    private bool wasGrounded;
 
     private void Awake()
     {
@@ -53,64 +63,175 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         CheckGround();
-        if (InputEnabled) Look();
+
+        if (InputEnabled)
+            Look();
+
         Move();
     }
 
+    // =========================================
+    // 접지 판정
+    // =========================================
+
+
     private void CheckGround()
     {
-        IsGrounded = Physics.CheckSphere(
-            groundCheck.position, groundCheckRadius, groundMask, QueryTriggerInteraction.Ignore);
+        bool touching = false;
+        string groundName = "";
 
-        GroundedTime = IsGrounded ? GroundedTime + Time.deltaTime : 0f;
+        if (verticalVelocity <= 0f)
+        {
+            Vector3 footPosition = transform.position
+                + cc.center
+                - Vector3.up * (cc.height / 2f);
+
+            // 발 위치에서 아래 방향으로 검사
+            Vector3 origin = footPosition + Vector3.up * 0.1f;
+
+            if (Physics.Raycast(
+                origin,
+                Vector3.down,
+                out RaycastHit hit,
+                0.3f,
+                groundMask,
+                QueryTriggerInteraction.Ignore))
+            {
+                if (!hit.transform.IsChildOf(transform))
+                {
+                    touching = true;
+                    groundName = hit.collider.name;
+                }
+            }
+        }
+
+        IsGrounded = touching;
+
+        GroundedTime = IsGrounded
+            ? GroundedTime + Time.deltaTime
+            : 0f;
     }
+
+
+    // =========================================
+    // 마우스 시점
+    // =========================================
 
     private void Look()
     {
-        if (Mouse.current == null) return;
+        if (Mouse.current == null)
+            return;
 
-        // 마우스 delta는 이미 프레임당 이동량이라 Time.deltaTime을 곱하지 않습니다.
-        Vector2 delta = Mouse.current.delta.ReadValue() * mouseSensitivity;
+        Vector2 delta =
+            Mouse.current.delta.ReadValue() * mouseSensitivity;
 
-        xRotation = Mathf.Clamp(xRotation - delta.y, -maxLookAngle, maxLookAngle);
-        cameraPivot.localRotation = Quaternion.Euler(xRotation, 0f, 0f);  // 상하: 카메라만
-        transform.Rotate(Vector3.up * delta.x);                           // 좌우: 플레이어 전체
+        xRotation = Mathf.Clamp(
+            xRotation - delta.y,
+            -maxLookAngle,
+            maxLookAngle
+        );
+
+        if (cameraPivot != null)
+        {
+            cameraPivot.localRotation =
+                Quaternion.Euler(xRotation, 0f, 0f);
+        }
+
+        transform.Rotate(Vector3.up * delta.x);
     }
+
+    // =========================================
+    // 플레이어 이동 및 점프
+    // =========================================
 
     private void Move()
     {
         Keyboard kb = Keyboard.current;
+
         Vector2 input = Vector2.zero;
         bool jumpPressed = false;
 
         if (InputEnabled && kb != null)
         {
-            input.x = (kb.dKey.isPressed ? 1f : 0f) - (kb.aKey.isPressed ? 1f : 0f);
-            input.y = (kb.wKey.isPressed ? 1f : 0f) - (kb.sKey.isPressed ? 1f : 0f);
+            input.x =
+                (kb.dKey.isPressed ? 1f : 0f)
+                - (kb.aKey.isPressed ? 1f : 0f);
+
+            input.y =
+                (kb.wKey.isPressed ? 1f : 0f)
+                - (kb.sKey.isPressed ? 1f : 0f);
+
             jumpPressed = kb.spaceKey.wasPressedThisFrame;
         }
 
-        input = Vector2.ClampMagnitude(input, 1f);  // 대각선 이동이 빨라지지 않게
+        // 대각선 이동 속도 제한
+        input = Vector2.ClampMagnitude(input, 1f);
 
-        float speed = moveSpeed * (IsGrounded ? 1f : airControl);
-        Vector3 horizontal = (transform.right * input.x + transform.forward * input.y) * speed;
+        // 지상 및 공중 이동 속도
+        float speed = moveSpeed *
+            (IsGrounded ? 1f : airControl);
 
-        // 중력 · 점프 (점프는 접지 중에만)
+        Vector3 horizontal =
+            (transform.right * input.x
+            + transform.forward * input.y) * speed;
+
+        // 접지 중에는 바닥에 붙도록 처리
         if (IsGrounded && verticalVelocity < 0f)
-            verticalVelocity = -2f;  // 바닥에 살짝 붙여두기
+        {
+            verticalVelocity = -2f;
+        }
 
+        // 접지 상태에서만 점프 가능
         if (jumpPressed && IsGrounded)
-            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        {
+            verticalVelocity =
+                Mathf.Sqrt(jumpHeight * -2f * gravity);
 
+            IsGrounded = false;
+            GroundedTime = 0f;
+        }
+
+        // 중력 적용
         verticalVelocity += gravity * Time.deltaTime;
 
-        cc.Move((horizontal + Vector3.up * verticalVelocity) * Time.deltaTime);
+        // 최종 이동
+        CollisionFlags flags = cc.Move(
+            (horizontal + Vector3.up * verticalVelocity)
+            * Time.deltaTime
+        );
+
+        // 천장에 부딪혔을 때 상승 속도 초기화
+        if ((flags & CollisionFlags.Above) != 0
+            && verticalVelocity > 0f)
+        {
+            verticalVelocity = 0f;
+        }
     }
+
+    // =========================================
+    // 접지 검사 위치 표시
+    // =========================================
 
     private void OnDrawGizmosSelected()
     {
-        if (groundCheck == null) return;
+        CharacterController controller =
+            GetComponent<CharacterController>();
+
+        if (controller == null)
+            return;
+
+        Vector3 footPosition = transform.position
+            + controller.center
+            - Vector3.up * (controller.height / 2f);
+
+        Vector3 checkPosition =
+            footPosition + Vector3.up * 0.02f;
+
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+
+        Gizmos.DrawWireSphere(
+            checkPosition + Vector3.down * groundCheckDistance,
+            groundCheckRadius
+        );
     }
 }
