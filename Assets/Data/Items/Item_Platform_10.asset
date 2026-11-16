@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5820efe78691f1346bae3bfc9a947c0d, type: 3}
   m_Name: Item_Platform_10
   m_EditorClassIdentifier: Assembly-CSharp::Project.Inventory.ItemData
-  id: 
-  displayName: 
+  id: Item_Platform_10
+  displayName: "\uBC1C\uD310(10\uCF54\uC778)"
   icon: {fileID: 0}
   category: 0
   maxStack: 10
