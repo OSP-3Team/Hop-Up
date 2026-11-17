@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,9 @@ namespace Project.Inventory
     public class InventoryManager : MonoBehaviour
     {
         public const int MaxSlotCount = 10;
+
+        // 인벤토리 내용이나 칸 수가 바뀔 때마다 발생
+        public event Action OnInventoryChanged;
 
         [SerializeField, Range(1, MaxSlotCount)]
         private int startSlotCount = 1;
@@ -44,6 +48,8 @@ namespace Project.Inventory
         {
             if (item == null || amount <= 0) return Mathf.Max(amount, 0);
 
+            int requested = amount;
+
             // 1) 같은 종류가 있는 칸부터 채우기
             foreach (var slot in slots)
             {
@@ -69,6 +75,9 @@ namespace Project.Inventory
                 amount -= moved;
             }
 
+            // 하나라도 들어갔을 때만 알림
+            if (amount < requested) OnInventoryChanged?.Invoke();
+
             return amount;
         }
 
@@ -88,6 +97,8 @@ namespace Project.Inventory
                 amount -= taken;
                 if (slot.count <= 0) slot.Clear();
             }
+
+            OnInventoryChanged?.Invoke();
             return true;
         }
 
@@ -98,6 +109,8 @@ namespace Project.Inventory
 
             for (int i = 0; i < amount; i++)
                 slots.Add(new InventorySlot());
+
+            OnInventoryChanged?.Invoke();
             return true;
         }
     }
