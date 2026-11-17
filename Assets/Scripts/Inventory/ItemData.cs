@@ -19,6 +19,8 @@ namespace Project.Inventory
 
         public string displayName;
         public Sprite icon;
+        [Tooltip("손에 들었을 때 보여 줄 프리팹. 비워 두면 임시 도형을 쓴다.")]
+        public GameObject heldPrefab;
         public ItemCategory category;
 
         [Min(1)]
