@@ -98,6 +98,16 @@ namespace Project.Inventory
             else Debug.LogError($"{failCount}개 테스트 실패");
         }
 
+        [ContextMenu("Add Sample Items")]
+        private void AddSampleItems()
+        {
+            if (!Application.isPlaying) return;
+
+            inventory.TryExpandSlots(2);
+            inventory.Add(platform, 13);
+            inventory.Add(seed, 4);
+        }
+
         private void Check(bool ok, string label)
         {
             if (ok)
