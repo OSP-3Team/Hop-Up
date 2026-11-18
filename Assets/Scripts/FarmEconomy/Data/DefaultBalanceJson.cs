@@ -1,0 +1,142 @@
+namespace HopUp.FarmEconomy
+{
+    /// <summary>StreamingAssets/Balance/farm_economy.json과 같은 내용의 내장 기본값(작은따옴표 JSON). 파일이 없거나 깨졌을 때 쓴다.</summary>
+    internal static class DefaultBalanceJson
+    {
+        public const string Text = @"{
+  'farm': {
+    'startPlotCount': 4,
+    'plotCapByStage': [
+      8,
+      12,
+      14,
+      16
+    ],
+    'goldenPlotCount': 2,
+    'goldenPlotUnlockStage': 2,
+    'waterGrowthReduction': 0.2,
+    'offlineGrowthCapSeconds': 0,
+    'plotExpansionBasePrice': 40,
+    'plotExpansionPriceGrowth': 1.3
+  },
+  'zones': {
+    'stationHeights': [
+      75,
+      150,
+      225
+    ],
+    'scaffoldPriceMultipliers': [
+      1,
+      2,
+      4,
+      8
+    ]
+  },
+  'shop': {
+    'startSlots': 1,
+    'maxSlots': 10,
+    'inventoryStackLimit': 10,
+    'maxBots': 4,
+    'botUnlockStage': 0,
+    'slotPrices': [
+      120,
+      150,
+      180,
+      210,
+      240,
+      270,
+      300,
+      330,
+      390
+    ],
+    'botPrices': [
+      250,
+      500,
+      900,
+      1600
+    ],
+    'scaffolds': [
+      {
+        'tier': 1,
+        'name': '나무 발판',
+        'basePrice': 10
+      },
+      {
+        'tier': 2,
+        'name': '돌 발판',
+        'basePrice': 25
+      },
+      {
+        'tier': 3,
+        'name': '철 발판',
+        'basePrice': 60
+      }
+    ]
+  },
+  'crops': [
+    {
+      'id': 'normal',
+      'name': '당근',
+      'growSeconds': 90,
+      'harvestAmount': 1,
+      'seedPrice': 2,
+      'sellPrice': 5,
+      'unlockStage': 0,
+      'golden': false,
+      'botAllowed': true
+    },
+    {
+      'id': 'fast',
+      'name': '속성 당근',
+      'growSeconds': 45,
+      'harvestAmount': 1,
+      'seedPrice': 4,
+      'sellPrice': 6,
+      'unlockStage': 1,
+      'golden': false,
+      'botAllowed': true
+    },
+    {
+      'id': 'golden',
+      'name': '황금 당근',
+      'growSeconds': 300,
+      'harvestAmount': 1,
+      'seedPrice': 25,
+      'sellPrice': 40,
+      'unlockStage': 2,
+      'golden': true,
+      'botAllowed': false
+    }
+  ],
+  'cooking': {
+    'maxFallProtectionCharges': 3,
+    'recipes': [
+      {
+        'id': 'carrot_soup',
+        'name': '당근 수프',
+        'ingredients': [
+          {
+            'itemId': 'carrot_normal',
+            'count': 3
+          }
+        ],
+        'resultItemId': 'food_carrot_soup',
+        'effect': {
+          'type': 'fall_protection',
+          'charges': 1
+        }
+      }
+    ]
+  },
+  'newGame': {
+    'startingCoins': 20,
+    'startingItems': [
+      {
+        'itemId': 'seed_normal',
+        'count': 3
+      }
+    ]
+  }
+}";
+    }
+}
