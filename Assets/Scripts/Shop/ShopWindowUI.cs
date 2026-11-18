@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Project.UI;
 
 namespace Project.Shop
 {
-    public class ShopWindowUI : MonoBehaviour
+    public class ShopWindowUI : MonoBehaviour, IUIWindow
     {
         [SerializeField] private ShopCatalog catalog;
         [SerializeField] private CoinWallet wallet;
