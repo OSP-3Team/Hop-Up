@@ -690,6 +690,7 @@ GameObject:
   - component: {fileID: 2103924332}
   - component: {fileID: 2103924333}
   - component: {fileID: 2103924334}
+  - component: {fileID: 2103924335}
   m_Layer: 0
   m_Name: InventoryManager
   m_TagString: Untagged
@@ -786,6 +787,19 @@ MonoBehaviour:
   hotbar: {fileID: 2103924333}
   holdPoint: {fileID: 1700426335}
   placeholderSize: 0.2
+--- !u!114 &2103924335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103924328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1848f3df832bbfe4e85d65293c3b8f66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Shop.CoinWallet
+  coins: 100
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
