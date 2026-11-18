@@ -39,6 +39,7 @@ namespace HopUp.FarmEconomy
         public ShopService Shop { get; private set; }
         public SellService Sales { get; private set; }
         public CookingService Cooking { get; private set; }
+        public FarmBotService Bots { get; private set; }
         public ISaveSection Save { get; private set; }
 
         void Awake()
@@ -70,7 +71,8 @@ namespace HopUp.FarmEconomy
             Shop = new ShopService(Config, Wallet, Zone, Inventory, Field);
             Sales = new SellService(Config, Carrots, Wallet);
             Cooking = new CookingService(Config, Inventory, Carrots, dropper);
-            Save = new FarmEconomySaveSection(Wallet, Carrots, Zone, Field, Shop, Cooking);
+            Bots = new FarmBotService(Config, Inventory, Carrots, Shop);
+            Save = new FarmEconomySaveSection(Wallet, Carrots, Zone, Field, Shop, Cooking, Bots);
 
             if (applyNewGameOnAwake) ApplyNewGame();
         }
@@ -93,6 +95,7 @@ namespace HopUp.FarmEconomy
             Carrots.Restore(null);
             Zone.Restore(0);
             Shop.RestoreBots(0);
+            Bots.Restore(null);
             Field.Restore(Config.farm.startPlotCount, null);
             Cooking.RestoreState(null, 0);
             foreach (ItemStack s in ng.startingItems)

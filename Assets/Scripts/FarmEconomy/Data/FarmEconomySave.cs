@@ -27,6 +27,7 @@ namespace HopUp.FarmEconomy
         public Dictionary<string, int> carrots = new Dictionary<string, int>();
         public int zoneStage;
         public int botsOwned;
+        public List<BotSnapshot> bots = new List<BotSnapshot>();
         public int unlockedNormalPlots;
         public List<PlotSnapshot> plots = new List<PlotSnapshot>();
         public List<string> discoveredRecipes = new List<string>();
@@ -44,8 +45,9 @@ namespace HopUp.FarmEconomy
         readonly FarmField field;
         readonly ShopService shop;
         readonly CookingService cooking;
+        readonly FarmBotService bots;
 
-        public FarmEconomySaveSection(Wallet wallet, CarrotStock stock, ZoneProgress zone, FarmField field, ShopService shop, CookingService cooking)
+        public FarmEconomySaveSection(Wallet wallet, CarrotStock stock, ZoneProgress zone, FarmField field, ShopService shop, CookingService cooking, FarmBotService bots)
         {
             this.wallet = wallet;
             this.stock = stock;
@@ -53,6 +55,7 @@ namespace HopUp.FarmEconomy
             this.field = field;
             this.shop = shop;
             this.cooking = cooking;
+            this.bots = bots;
         }
 
         public string Key { get { return SectionKey; } }
@@ -67,6 +70,7 @@ namespace HopUp.FarmEconomy
                 carrots = stock.Snapshot(),
                 zoneStage = zone.Stage,
                 botsOwned = shop.BotsOwned,
+                bots = bots.Capture(),
                 unlockedNormalPlots = field.UnlockedNormalPlots,
                 plots = field.Capture(),
                 discoveredRecipes = cooking.DiscoveredRecipeIds.ToList(),
@@ -94,6 +98,7 @@ namespace HopUp.FarmEconomy
             stock.Restore(dto.carrots);
             zone.Restore(dto.zoneStage);
             shop.RestoreBots(dto.botsOwned);
+            bots.Restore(dto.bots);  // 봇 수가 정해진 뒤에
             field.Restore(dto.unlockedNormalPlots, dto.plots);
             cooking.RestoreState(dto.discoveredRecipes, dto.fallProtectionCharges);
 
