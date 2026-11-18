@@ -27,6 +27,13 @@ MonoBehaviour:
     price: 25
     item: {fileID: 0}
     carrotType: 0
+  - id: platform_60
+    category: 0
+    displayName: "\uBC1C\uD310(60\uCF54\uC778)"
+    icon: {fileID: 0}
+    price: 60
+    item: {fileID: 0}
+    carrotType: 0
   - id: seed_normal
     category: 1
     displayName: "\uC77C\uBC18 \uB2F9\uADFC \uC528\uC557"
@@ -41,11 +48,25 @@ MonoBehaviour:
     price: 20
     item: {fileID: 0}
     carrotType: 0
+  - id: seed_golden
+    category: 1
+    displayName: "\uD669\uAE08 \uB2F9\uADFC \uC528\uC557"
+    icon: {fileID: 0}
+    price: 60
+    item: {fileID: 0}
+    carrotType: 0
   - id: expand_inventory
     category: 2
     displayName: "\uC778\uBCA4\uD1A0\uB9AC \uCE78"
     icon: {fileID: 0}
     price: 50
+    item: {fileID: 0}
+    carrotType: 0
+  - id: expand_farm_cell
+    category: 2
+    displayName: "\uBC2D \uCE78"
+    icon: {fileID: 0}
+    price: 30
     item: {fileID: 0}
     carrotType: 0
   - id: farm_bot
@@ -69,6 +90,13 @@ MonoBehaviour:
     price: 150
     item: {fileID: 0}
     carrotType: 0
+  - id: pot
+    category: 3
+    displayName: "\uD654\uBD84"
+    icon: {fileID: 0}
+    price: 20
+    item: {fileID: 0}
+    carrotType: 0
   - id: sell_normal
     category: 4
     displayName: "\uC77C\uBC18 \uB2F9\uADFC"
@@ -76,6 +104,13 @@ MonoBehaviour:
     price: 5
     item: {fileID: 0}
     carrotType: 0
+  - id: sell_fast
+    category: 4
+    displayName: "\uBE60\uB978 \uB2F9\uADFC"
+    icon: {fileID: 0}
+    price: 4
+    item: {fileID: 0}
+    carrotType: 1
   - id: sell_golden
     category: 4
     displayName: "\uD669\uAE08 \uB2F9\uADFC"
