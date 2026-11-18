@@ -1261,7 +1261,12 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+<<<<<<< Updated upstream
   - {fileID: 402114740}
+=======
+  - {fileID: 1452139692}
+  - {fileID: 737018187}
+>>>>>>> Stashed changes
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1242091263
@@ -1276,7 +1281,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87cfb2ce4b02cb2478181a955c2893b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+<<<<<<< Updated upstream
   cameraPivot: {fileID: 402114740}
+=======
+  cameraPivot: {fileID: 0}
+>>>>>>> Stashed changes
   groundMask:
     serializedVersion: 2
     m_Bits: 8
@@ -1285,7 +1294,11 @@ MonoBehaviour:
   gravity: -20
   airControl: 1
   groundCheckRadius: 0.2
+<<<<<<< Updated upstream
   groundCheckDistance: 0.2
+=======
+  groundCheckDistance: 0.08
+>>>>>>> Stashed changes
   logGroundState: 1
   mouseSensitivity: 0.1
   maxLookAngle: 85
@@ -1319,7 +1332,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 414146021}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1513,11 +1526,15 @@ Transform:
   m_GameObject: {fileID: 1452139689}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+<<<<<<< Updated upstream
   m_LocalPosition: {x: 0, y: 1.2, z: 0}
+=======
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+>>>>>>> Stashed changes
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 402114740}
+  m_Father: {fileID: 1242091262}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1452139693
 MonoBehaviour:
@@ -2260,5 +2277,5 @@ SceneRoots:
   - {fileID: 1891493236}
   - {fileID: 715608523}
   - {fileID: 1242091262}
-  - {fileID: 414146021}
   - {fileID: 1751764595}
+  - {fileID: 1296513980}
