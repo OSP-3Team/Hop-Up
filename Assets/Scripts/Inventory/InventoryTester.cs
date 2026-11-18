@@ -108,6 +108,14 @@ namespace Project.Inventory
             inventory.Add(seed, 4);
         }
 
+        [ContextMenu("Remove Sample Seeds")]
+        private void RemoveSampleSeeds()
+        {
+            if (!Application.isPlaying) return;
+
+            inventory.Remove(seed, 4);
+        }
+
         private void Check(bool ok, string label)
         {
             if (ok)
