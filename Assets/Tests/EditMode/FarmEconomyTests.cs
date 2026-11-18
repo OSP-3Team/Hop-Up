@@ -27,6 +27,7 @@ namespace HopUp.FarmEconomy.Tests
             public readonly SellService Sales;
             public readonly CookingService Cooking;
             public readonly RecordingDropper Dropper = new RecordingDropper();
+            public readonly FarmBotService Bots;
             public readonly FarmEconomySaveSection Save;
 
             public Rig()
@@ -38,7 +39,8 @@ namespace HopUp.FarmEconomy.Tests
                 Shop = new ShopService(Cfg, Wallet, Zone, Inv, Field);
                 Sales = new SellService(Cfg, Stock, Wallet);
                 Cooking = new CookingService(Cfg, Inv, Stock, Dropper);
-                Save = new FarmEconomySaveSection(Wallet, Stock, Zone, Field, Shop, Cooking);
+                Bots = new FarmBotService(Cfg, Inv, Stock, Shop);
+                Save = new FarmEconomySaveSection(Wallet, Stock, Zone, Field, Shop, Cooking, Bots);
             }
         }
 
@@ -409,6 +411,132 @@ namespace HopUp.FarmEconomy.Tests
             Assert.IsFalse(rig.Save.Restore(JObject.Parse("{\"coins\":\"abc\"}")));
             Assert.IsFalse(rig.Save.Restore(null));
             Assert.AreEqual(10, rig.Wallet.Coins);
+        }
+
+        // ───────── 농사 봇(AI-01~03) ─────────
+
+        [Test]
+        public void Bot_NotOwned_IsUnavailable()
+        {
+            var rig = new Rig();
+            Assert.IsNull(rig.Bots.Get(0));
+            Assert.AreEqual(SeedInsertResult.NoSuchBot, rig.Bots.InsertSeeds(0, "seed_normal", 1));
+            rig.Shop.RestoreBots(1);
+            Assert.IsNotNull(rig.Bots.Get(0));
+            Assert.AreSame(rig.Bots.Get(0), rig.Bots.Get(0));
+        }
+
+        [Test]
+        public void Bot_InsertSeeds_CapsAt30AndTakesOnlyFromInventory()
+        {
+            var rig = new Rig();
+            rig.Shop.RestoreBots(1);
+            rig.Inv.TryExpandSlots(4);
+            rig.Inv.TryAdd("seed_normal", 40);
+
+            Assert.AreEqual(SeedInsertResult.Ok, rig.Bots.InsertSeeds(0, "seed_normal", 40));
+            Assert.AreEqual(30, rig.Bots.Get(0).SeedCount);
+            Assert.AreEqual(10, rig.Inv.CountOf("seed_normal"));
+            Assert.AreEqual(SeedInsertResult.Full, rig.Bots.InsertSeeds(0, "seed_normal", 10));
+
+            // 인벤토리에 든 수량보다 많이 넣으라고 해도 실제로 뺀 만큼만
+            rig.Shop.RestoreBots(2);
+            rig.Inv.TryAdd("seed_fast", 3);
+            Assert.AreEqual(SeedInsertResult.Ok, rig.Bots.InsertSeeds(1, "seed_fast", 10));
+            Assert.AreEqual(3, rig.Bots.Get(1).SeedCount);
+            Assert.AreEqual(SeedInsertResult.NoSeedInInventory, rig.Bots.InsertSeeds(1, "seed_fast", 10));
+        }
+
+        [Test]
+        public void Bot_InsertSeeds_RejectsGoldenAndMixedTypes()
+        {
+            var rig = new Rig();
+            rig.Shop.RestoreBots(1);
+            rig.Inv.TryExpandSlots(3);
+            rig.Inv.TryAdd("seed_golden", 1);
+            rig.Inv.TryAdd("seed_normal", 1);
+            rig.Inv.TryAdd("seed_fast", 1);
+
+            Assert.AreEqual(SeedInsertResult.BotNotAllowed, rig.Bots.InsertSeeds(0, "seed_golden", 1));
+            Assert.AreEqual(1, rig.Inv.CountOf("seed_golden"));
+            Assert.AreEqual(SeedInsertResult.NotSeed, rig.Bots.InsertSeeds(0, "carrot_normal", 1));
+
+            BotModel bot = rig.Bots.Get(0);
+            Assert.AreEqual(SeedInsertResult.Ok, rig.Bots.InsertSeeds(0, "seed_normal", 1));
+            Assert.AreEqual(SeedInsertResult.OtherSeedInside, rig.Bots.InsertSeeds(0, "seed_fast", 1));
+
+            rig.Bots.ConsumeSeed(bot);
+            Assert.AreEqual(0, bot.SeedCount);
+            Assert.IsNull(bot.SeedCropId);
+            Assert.AreEqual(SeedInsertResult.Ok, rig.Bots.InsertSeeds(0, "seed_fast", 1));
+            Assert.AreEqual("fast", bot.SeedCropId);
+        }
+
+        [Test]
+        public void Bot_CollectCarrots_KeepsTypesSeparate()
+        {
+            var rig = new Rig();
+            rig.Shop.RestoreBots(1);
+            BotModel bot = rig.Bots.Get(0);
+            rig.Bots.AddHarvest(bot, "normal", 3);
+            rig.Bots.AddHarvest(bot, "fast", 2);
+            rig.Stock.Add("normal", 1);
+
+            Assert.AreEqual(5, rig.Bots.CollectCarrots(0));
+            Assert.AreEqual(4, rig.Stock.Count("normal"));
+            Assert.AreEqual(2, rig.Stock.Count("fast"));
+            Assert.AreEqual(0, bot.Carrots.Total);
+            Assert.AreEqual(0, rig.Bots.CollectCarrots(0));
+        }
+
+        [Test]
+        public void Bot_Describe_ShowsSeedsAndCarrotTotal()
+        {
+            var rig = new Rig();
+            rig.Shop.RestoreBots(1);
+            Assert.AreEqual("씨앗 0/30 · 당근 0", rig.Bots.Describe(0));
+            rig.Inv.TryAdd("seed_normal", 2);
+            rig.Bots.InsertSeeds(0, "seed_normal", 2);
+            rig.Bots.AddHarvest(rig.Bots.Get(0), "fast", 4);
+            Assert.AreEqual("씨앗 2/30 당근 · 당근 4", rig.Bots.Describe(0));
+        }
+
+        [Test]
+        public void Bot_LowLevelFarmApi_RefusesGoldenPlotAndCrop()
+        {
+            var rig = new Rig();
+            rig.Zone.NotifyHeight(150f);  // 황금 작물·황금 칸이 열리는 단계
+            int golden = rig.Field.NormalPlotTotal;
+            Assert.AreEqual(PlantResult.BotNotAllowed, rig.Field.TryPlant(0, "golden", true));
+            Assert.AreEqual(PlantResult.WrongPlotKind, rig.Field.TryPlant(golden, "normal", true));
+            Assert.AreEqual(PlantResult.Ok, rig.Field.TryPlant(0, "normal", true));
+        }
+
+        [Test]
+        public void Bot_Save_RoundTripsAndClampsCorruptValues()
+        {
+            var a = new Rig();
+            a.Shop.RestoreBots(2);
+            a.Inv.TryAdd("seed_fast", 7);
+            a.Bots.InsertSeeds(1, "seed_fast", 7);
+            a.Bots.AddHarvest(a.Bots.Get(1), "normal", 5);
+
+            var b = new Rig();
+            b.Shop.RestoreBots(2);
+            BotModel heldRef = b.Bots.Get(1);
+            Assert.IsTrue(b.Save.Restore(JObject.Parse(a.Save.Capture().ToString())));
+            Assert.AreSame(heldRef, b.Bots.Get(1), "씬의 봇이 들고 있는 참조가 바뀌면 안 됨");
+            Assert.AreEqual(7, heldRef.SeedCount);
+            Assert.AreEqual("fast", heldRef.SeedCropId);
+            Assert.AreEqual(5, heldRef.Carrots.Count("normal"));
+            Assert.AreEqual(0, b.Bots.Get(0).SeedCount);
+
+            JObject bad = a.Save.Capture();
+            bad["bots"] = JArray.Parse("[{\"seedCropId\":\"normal\",\"seedCount\":99},{\"seedCropId\":\"golden\",\"seedCount\":5}]");
+            Assert.IsTrue(b.Save.Restore(bad));
+            Assert.AreEqual(30, b.Bots.Get(0).SeedCount);
+            Assert.AreEqual(0, b.Bots.Get(1).SeedCount);
+            Assert.IsNull(b.Bots.Get(1).SeedCropId);
         }
     }
 }

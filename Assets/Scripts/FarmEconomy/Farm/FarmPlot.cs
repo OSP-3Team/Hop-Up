@@ -120,6 +120,12 @@ namespace HopUp.FarmEconomy
             return hub.Field.TryWater(plotIndex);
         }
 
+        /// <summary>plotIndex로 씬의 밭 칸을 찾는다(농사 봇이 이동 목표를 잡을 때 사용). 없으면 null.</summary>
+        public static FarmPlot Find(int index)
+        {
+            return Registry.Find(p => p.plotIndex == index);
+        }
+
         /// <summary>from에서 maxDistance(기본 1.5m, 흐름도 기준) 안의 가장 가까운 열린 밭 칸. 없으면 null.</summary>
         public static FarmPlot FindNearest(Vector3 from, float maxDistance = 1.5f)
         {
