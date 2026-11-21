@@ -1455,7 +1455,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlatformPlacer
   platformPrefab: {fileID: 7004609225833489017, guid: 8048cfc739536be4b9231b1bbf7fc2bd, type: 3}
   cameraPivot: {fileID: 3084769470409354505}
-  useInventory: 1
+  useInventory: 0
   placeDistance: 2.5
   verticalOffset: -0.8
   selectDistance: 2.5
