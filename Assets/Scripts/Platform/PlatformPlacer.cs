@@ -12,9 +12,10 @@ using UnityEngine.InputSystem;
 /// [인벤토리 연동] Use Inventory를 켜면
 ///   - 손에 발판을 들고 있을 때만 설치 기능(미리보기 포함)이 켜지고
 ///   - 설치에 성공했을 때 발판 1개를 소모합니다. (설치가 안 되면 소모하지 않음)
-///   인벤토리와는 IPlatformInventory 인터페이스로만 대화합니다.
 ///
-/// 아직 없는 것(나중에 추가): 낙하 중 입력 막기, 플레이 구역 검사
+/// [카메라] Camera Pivot 칸을 비워 두면 Player 안의 카메라를 자동으로 사용합니다.
+/// [디버그] Debug Placement를 켜면 설치 불가(빨강) 이유를 Console에 알려줍니다.
+///
 /// Player 오브젝트에 PlayerController와 함께 붙입니다.
 /// </summary>
 [RequireComponent(typeof(PlayerController))]
@@ -22,7 +23,8 @@ public class PlatformPlacer : MonoBehaviour
 {
     [Header("참조")]
     [SerializeField] private GameObject platformPrefab;  // Prefabs 폴더의 Platform
-    [SerializeField] private Transform cameraPivot;      // Player 아래의 CameraPivot
+    [SerializeField, Tooltip("눈 위치·시선 기준 오브젝트. 비워 두면 Player 안의 카메라를 자동으로 사용")]
+    private Transform cameraPivot;
 
     [Header("인벤토리 연동")]
     [SerializeField] private bool useInventory = false;  // 켜면 인벤토리 기준으로 설치·소모 (꺼두면 무한 설치)
@@ -38,6 +40,10 @@ public class PlatformPlacer : MonoBehaviour
     [SerializeField] private Color validColor = new Color(0.2f, 0.9f, 0.2f);
     [SerializeField] private Color invalidColor = new Color(0.9f, 0.2f, 0.2f);
 
+    [Header("디버그")]
+    [SerializeField, Tooltip("설치 불가 이유가 바뀔 때마다 Console에 출력 (확인이 끝나면 끄기)")]
+    private bool debugPlacement = true;
+
     private PlayerController player;
     private GameObject preview;
     private Renderer[] previewRenderers;
@@ -45,9 +51,24 @@ public class PlatformPlacer : MonoBehaviour
 
     private PlacedPlatform selected;   // null이 아니면 "발판 선택 모드"
 
+    private readonly Collider[] overlapBuffer = new Collider[16];
+    private readonly RaycastHit[] rayBuffer = new RaycastHit[16];
+    private string lastReason = "";
+
     private void Awake()
     {
         player = GetComponent<PlayerController>();
+
+        // Camera Pivot이 비었거나 Player 본체가 들어가 있으면 Player 안의 카메라를 자동으로 사용
+        if (cameraPivot == null || cameraPivot == transform)
+        {
+            Camera cam = GetComponentInChildren<Camera>();
+            if (cam != null)
+                cameraPivot = cam.transform;
+            else
+                Debug.LogError("[PlatformPlacer] Player 안에서 카메라를 찾지 못했습니다. Camera Pivot 칸에 Main Camera를 연결해 주세요.");
+        }
+
         CreatePreview();
     }
 
@@ -77,7 +98,7 @@ public class PlatformPlacer : MonoBehaviour
         }
 
         Mouse mouse = Mouse.current;
-        if (mouse == null) return;
+        if (mouse == null || cameraPivot == null) return;
 
         // 우클릭: 선택 모드 진입 / 해제 (손에 든 아이템과 상관없이 동작)
         if (mouse.rightButton.wasPressedThisFrame)
@@ -120,16 +141,29 @@ public class PlatformPlacer : MonoBehaviour
         preview.SetActive(true);
         preview.transform.SetPositionAndRotation(pos, rot);
 
-        // 1) 다른 물체와 겹치는가? (크기를 5% 줄여서 "딱 붙어 있는" 경우는 허용)
-        bool overlapping = Physics.CheckBox(
-            pos, halfExtents * 0.95f, rot, ~0, QueryTriggerInteraction.Ignore);
+        // 1) 다른 물체와 겹치는가? (내 몸은 제외)
+        bool overlapping = FindOverlap(pos, rot, out string overlapName);
 
-        // 2) 카메라에서 발판 중심까지 가는 길이 막혀 있는가? (바닥·벽 너머 설치 방지)
-        bool blocked = Physics.Linecast(
-            eye, pos, ~0, QueryTriggerInteraction.Ignore);
+        // 2) 카메라에서 발판 중심까지 가는 길이 막혀 있는가? (바닥·벽 너머 설치 방지, 내 몸은 제외)
+        bool blocked = FindBlocker(eye, pos, out string blockName);
 
         bool canPlace = !overlapping && !blocked;
         SetPreviewColor(canPlace ? validColor : invalidColor);
+
+        if (debugPlacement)
+        {
+            string reason = canPlace ? "설치 가능"
+                          : overlapping ? "겹침: " + overlapName
+                          : "가로막힘: " + blockName;
+
+            if (reason != lastReason)
+            {
+                Debug.Log("[발판] " + reason
+                          + " | 카메라 높이 " + eye.y.ToString("F2")
+                          + " | 발판 높이 " + pos.y.ToString("F2"));
+                lastReason = reason;
+            }
+        }
 
         if (canPlace && mouse.leftButton.wasPressedThisFrame)
         {
@@ -140,6 +174,51 @@ public class PlatformPlacer : MonoBehaviour
             GameObject placed = Instantiate(platformPrefab, pos, rot);
             placed.AddComponent<PlacedPlatform>();   // "설치된 발판" 표식 (파괴·선택에 사용)
         }
+    }
+
+    // Player 안의 콜라이더(내 몸)는 검사에서 제외
+    private bool IsMine(Collider c)
+    {
+        return c.transform.IsChildOf(transform);
+    }
+
+    private bool FindOverlap(Vector3 pos, Quaternion rot, out string culprit)
+    {
+        // 크기를 5% 줄여서 "딱 붙어 있는" 경우는 허용
+        int count = Physics.OverlapBoxNonAlloc(
+            pos, halfExtents * 0.95f, overlapBuffer, rot, ~0, QueryTriggerInteraction.Ignore);
+
+        for (int i = 0; i < count; i++)
+        {
+            if (IsMine(overlapBuffer[i])) continue;
+            culprit = overlapBuffer[i].name;
+            return true;
+        }
+
+        culprit = "";
+        return false;
+    }
+
+    private bool FindBlocker(Vector3 from, Vector3 to, out string culprit)
+    {
+        Vector3 dir = to - from;
+        float dist = dir.magnitude;
+
+        if (dist > 0.001f)
+        {
+            int count = Physics.RaycastNonAlloc(
+                from, dir / dist, rayBuffer, dist, ~0, QueryTriggerInteraction.Ignore);
+
+            for (int i = 0; i < count; i++)
+            {
+                if (IsMine(rayBuffer[i].collider)) continue;
+                culprit = rayBuffer[i].collider.name;
+                return true;
+            }
+        }
+
+        culprit = "";
+        return false;
     }
 
     // ───────────────────────── 파괴 (선택 모드) ─────────────────────────
@@ -192,13 +271,26 @@ public class PlatformPlacer : MonoBehaviour
 
     private PlacedPlatform FindAimedPlatform()
     {
-        Ray ray = new Ray(cameraPivot.position, cameraPivot.forward);
+        // 에임 방향으로 쏴서 (내 몸을 빼고) 맨 처음 맞은 물체가 설치된 발판인지 확인
+        int count = Physics.RaycastNonAlloc(
+            cameraPivot.position, cameraPivot.forward, rayBuffer, selectDistance, ~0, QueryTriggerInteraction.Ignore);
 
-        // 에임 방향으로 쏴서 맨 처음 맞은 물체가 설치된 발판인지 확인 (바닥·벽이 먼저면 null)
-        if (Physics.Raycast(ray, out RaycastHit hit, selectDistance, ~0, QueryTriggerInteraction.Ignore))
-            return hit.collider.GetComponentInParent<PlacedPlatform>();
+        float nearest = float.MaxValue;
+        Collider nearestCol = null;
 
-        return null;
+        for (int i = 0; i < count; i++)
+        {
+            Collider c = rayBuffer[i].collider;
+            if (IsMine(c)) continue;
+            if (rayBuffer[i].distance < nearest)
+            {
+                nearest = rayBuffer[i].distance;
+                nearestCol = c;
+            }
+        }
+
+        // 바닥·벽이 더 가까우면 발판이 아니므로 null
+        return nearestCol != null ? nearestCol.GetComponentInParent<PlacedPlatform>() : null;
     }
 
     private void SetPreviewColor(Color color)
