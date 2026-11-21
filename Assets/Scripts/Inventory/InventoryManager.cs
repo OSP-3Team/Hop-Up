@@ -102,6 +102,20 @@ namespace Project.Inventory
             return true;
         }
 
+        // 지정한 칸에서 amount개 제거 (손에 든 칸에서 쓸 때 사용: 발판 설치, Q 버리기 등)
+        // 칸이 비었거나 개수가 모자라면 아무것도 지우지 않고 false
+        public bool RemoveFromSlot(int index, int amount = 1)
+        {
+            var slot = GetSlot(index);
+            if (slot == null || slot.IsEmpty || amount <= 0 || slot.count < amount) return false;
+
+            slot.count -= amount;
+            if (slot.count <= 0) slot.Clear();
+
+            OnInventoryChanged?.Invoke();
+            return true;
+        }
+
         // 칸 늘리기 (최대 10칸). 상한을 넘으면 false
         public bool TryExpandSlots(int amount = 1)
         {
