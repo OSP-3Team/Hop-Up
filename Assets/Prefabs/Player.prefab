@@ -1454,7 +1454,7 @@ MonoBehaviour:
   useInventory: 0
   placeDistance: 2.5
   verticalOffset: -0.8
-  selectDistance: 1.5
+  selectDistance: 2.5
   validColor: {r: 0.2, g: 0.9, b: 0.2, a: 1}
   invalidColor: {r: 0.9, g: 0.2, b: 0.2, a: 1}
   debugPlacement: 1
