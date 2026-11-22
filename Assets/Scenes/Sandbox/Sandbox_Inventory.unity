@@ -671,6 +671,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 346550052}
   m_CullTransparentMesh: 1
+--- !u!1 &421975462
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 421975464}
+  - component: {fileID: 421975463}
+  - component: {fileID: 421975465}
+  m_Layer: 0
+  m_Name: EconomyHub
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &421975463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421975462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a40da32ec6777614a98346f4e736fc3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HopUp.FarmEconomy::HopUp.FarmEconomy.EconomyHub
+  balanceFile: Balance/farm_economy.json
+  inventoryComponent: {fileID: 2103924329}
+  dropperComponent: {fileID: 0}
+  applyNewGameOnAwake: 1
+--- !u!4 &421975464
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421975462}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 441, y: 109.86734, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &421975465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421975462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b87b8881635b41f4cb58d93484ddd8e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Inventory.EconomyIntegrationTester
 --- !u!1 &498801664
 GameObject:
   m_ObjectHideFlags: 0
@@ -2320,6 +2381,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.Inventory.InventoryManager
   startSlotCount: 1
   slots: []
+  itemDatabase: {fileID: 11400000, guid: a0d0e0121f9809741b2ae9dd752409ab, type: 2}
 --- !u!4 &2103924330
 Transform:
   m_ObjectHideFlags: 0
@@ -2555,3 +2617,4 @@ SceneRoots:
   - {fileID: 506248482}
   - {fileID: 584439329}
   - {fileID: 1313119667}
+  - {fileID: 421975464}

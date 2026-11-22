@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using HopUp.FarmEconomy;
 
 namespace Project.Inventory
 {
@@ -114,6 +115,39 @@ namespace Project.Inventory
             if (!Application.isPlaying) return;
 
             inventory.Remove(seed, 4);
+        }
+
+        [ContextMenu("Run IInventory Tests")]
+        private void RunInterfaceTests()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogWarning("Play 모드에서 실행해 주세요.");
+                return;
+            }
+            if (inventory == null || platform == null)
+            {
+                Debug.LogError("Inventory와 Platform을 연결해 주세요.");
+                return;
+            }
+
+            failCount = 0;
+            IInventory inv = inventory;
+            string id = platform.id;
+
+            Check(inv.MaxSlots == 10, "최대 칸 수는 10이다");
+            Check(inv.SlotCount == 1, "시작 칸은 1이다");
+            Check(inv.FreeCapacityFor(id) == 10, "빈 칸 1개면 10개를 더 넣을 수 있다");
+            Check(inv.TryAdd(id, 13) == 10, "자리가 모자라면 넣을 수 있는 만큼(10)만 넣는다");
+            Check(inv.CountOf(id) == 10, "넣은 개수가 보관된다");
+            Check(inv.FreeCapacityFor(id) == 0, "가득 차면 더 넣을 수 있는 개수가 0이다");
+            Check(inv.TryRemove(id, 4) == 4 && inv.CountOf(id) == 6, "4개를 뺀다");
+            Check(inv.TryRemove(id, 99) == 6 && inv.CountOf(id) == 0, "모자라면 있는 만큼(6)만 뺀다");
+            Check(inv.TryExpandSlots(1) && inv.SlotCount == 2, "칸을 1개 늘린다");
+            Check(inv.CountOf("no_such_item") == 0, "모르는 id는 0이다 (경고가 하나 나오는 게 정상)");
+
+            if (failCount == 0) Debug.Log("모든 IInventory 테스트 통과");
+            else Debug.LogError($"{failCount}개 테스트 실패");
         }
 
         private void Check(bool ok, string label)
