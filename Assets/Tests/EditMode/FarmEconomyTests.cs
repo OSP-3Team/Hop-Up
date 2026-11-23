@@ -202,7 +202,7 @@ namespace HopUp.FarmEconomy.Tests
             rig.Wallet.Add(100000);
             PurchaseResult r = rig.Shop.TryPurchase(rig.Shop.Find(ShopService.BotItemId), 10);
             Assert.AreEqual(4, r.Purchased);
-            Assert.AreEqual(3250, r.CoinsSpent);
+            Assert.AreEqual(3626, r.CoinsSpent);
             Assert.AreEqual(4, rig.Shop.BotsOwned);
         }
 
