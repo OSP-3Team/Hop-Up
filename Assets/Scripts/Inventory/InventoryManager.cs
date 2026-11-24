@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using HopUp.FarmEconomy;
 
 namespace Project.Inventory
 {
-    public class InventoryManager : MonoBehaviour
+    [DefaultExecutionOrder(-300)]
+    public class InventoryManager : MonoBehaviour, IInventory
     {
         public const int MaxSlotCount = 10;
 
@@ -16,6 +18,9 @@ namespace Project.Inventory
 
         [SerializeField]
         private List<InventorySlot> slots = new List<InventorySlot>();
+
+        [SerializeField, Tooltip("아이템 id(문자열)로 ItemData를 찾는 목록")]
+        private ItemDatabase itemDatabase;
 
         public int SlotCount => slots.Count;
 
@@ -127,5 +132,73 @@ namespace Project.Inventory
             OnInventoryChanged?.Invoke();
             return true;
         }
+
+        // ---- IInventory 구현: FarmEconomy가 문자열 아이템 id로 접근하는 통로 ----
+
+        public int MaxSlots => MaxSlotCount;
+
+        public int CountOf(string itemId)
+        {
+            return GetCount(FindItem(itemId));
+        }
+
+        // 실제로 넣은 개수를 반환 (자리가 모자라면 넣을 수 있는 만큼만)
+        public int TryAdd(string itemId, int count)
+        {
+            ItemData item = FindItem(itemId);
+            if (item == null || count <= 0) return 0;
+
+            int leftover = Add(item, count);
+            return count - leftover;
+        }
+
+        // 실제로 뺀 개수를 반환 (모자라면 있는 만큼만)
+        public int TryRemove(string itemId, int count)
+        {
+            ItemData item = FindItem(itemId);
+            if (item == null || count <= 0) return 0;
+
+            int removable = Mathf.Min(count, GetCount(item));
+            if (removable <= 0) return 0;
+
+            Remove(item, removable);
+            return removable;
+        }
+
+        // 이 아이템을 지금 더 넣을 수 있는 개수
+        public int FreeCapacityFor(string itemId)
+        {
+            ItemData item = FindItem(itemId);
+            if (item == null) return 0;
+
+            int space = 0;
+            foreach (var slot in slots)
+            {
+                if (slot.IsEmpty) space += item.maxStack;
+                else if (slot.item == item) space += item.maxStack - slot.count;
+            }
+            return space;
+        }
+
+        // 아이템 id로 ItemData를 찾음 (화면 표시용). 없으면 null
+        public ItemData GetItemData(string itemId)
+        {
+            return itemDatabase != null ? itemDatabase.Find(itemId) : null;
+        }
+
+        private ItemData FindItem(string itemId)
+        {
+            if (itemDatabase == null)
+            {
+                Debug.LogError("[InventoryManager] Item Database가 연결되지 않았습니다.", this);
+                return null;
+            }
+
+            ItemData item = itemDatabase.Find(itemId);
+            if (item == null)
+                Debug.LogWarning($"[InventoryManager] 알 수 없는 아이템 id: {itemId}", this);
+            return item;
+        }
+        
     }
 }

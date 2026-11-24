@@ -12,9 +12,15 @@ namespace Project.UI
 
         [SerializeField] private Hotbar hotbar;
 
+        [SerializeField, Tooltip("켜면 창 하나를 열 때 열려 있던 다른 창을 닫는다")]
+        private bool onlyOneWindowOpen = true;
+
         [SerializeField] private bool logChanges = true;
 
         private readonly List<IUIWindow> windows = new List<IUIWindow>();
+        private readonly Dictionary<IUIWindow, Action<bool>> handlers =
+            new Dictionary<IUIWindow, Action<bool>>();
+
         private bool anyOpen;
         private CursorLockMode savedLockState;
         private bool savedCursorVisible;
@@ -38,16 +44,37 @@ namespace Project.UI
         private void OnEnable()
         {
             foreach (var window in windows)
-                window.OnOpenChanged += OnWindowOpenChanged;
+            {
+                IUIWindow captured = window; // 어느 창의 이벤트인지 기억하기 위한 복사
+                Action<bool> handler = open => OnWindowOpenChanged(captured, open);
+                handlers[window] = handler;
+                window.OnOpenChanged += handler;
+            }
         }
 
         private void OnDisable()
         {
-            foreach (var window in windows)
-                window.OnOpenChanged -= OnWindowOpenChanged;
+            foreach (var pair in handlers)
+                pair.Key.OnOpenChanged -= pair.Value;
+            handlers.Clear();
         }
 
-        private void OnWindowOpenChanged(bool open)
+        private void OnWindowOpenChanged(IUIWindow changed, bool open)
+        {
+            // 한 번에 창 하나만: 새로 열렸으면 나머지는 닫음
+            if (open && onlyOneWindowOpen)
+            {
+                foreach (var other in windows)
+                {
+                    if (other != changed && other.IsOpen)
+                        other.SetOpen(false);
+                }
+            }
+
+            RefreshState();
+        }
+
+        private void RefreshState()
         {
             bool nowOpen = false;
             foreach (var window in windows)
