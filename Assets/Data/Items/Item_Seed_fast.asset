@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5820efe78691f1346bae3bfc9a947c0d, type: 3}
-  m_Name: Item_Seed_fast
+  m_Name: Item_Seed_Fast
   m_EditorClassIdentifier: Assembly-CSharp::Project.Inventory.ItemData
   id: seed_fast
   displayName: "\uC18D\uC131 \uB2F9\uADFC \uC528\uC557"
