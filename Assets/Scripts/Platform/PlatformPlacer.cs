@@ -4,12 +4,12 @@ using UnityEngine.InputSystem;
 /// <summary>
 /// WBS 3.3 발판 설치·파괴 (SYS-05)
 ///
-/// [설치]  좌클릭: 에임 앞쪽에 미리보기(초록 = 가능, 빨강 = 불가)가 뜨고, 초록일 때 좌클릭하면 설치
+/// [설치]  에임 위치에 미리보기(초록 = 가능, 빨강 = 불가)가 뜨고, 초록일 때 좌클릭하면 설치
 /// [파괴]  우클릭: 1.5m 이내에서 조준한 발판을 선택 (발판 선택 모드 진입, 주황색 표시)
 ///         좌클릭: 선택 모드에서 누르면 발판 파괴 후 모드 해제
 ///         우클릭: 선택 모드에서 다시 누르면 선택 취소
 ///
-/// [인벤토리 연동] Use Inventory를 켜면
+/// [인벤토리 연동] Use Inventory를 켜거나, 씬에 인벤토리(PlatformInventoryBridge)가 있으면
 ///   - 손에 발판을 들고 있을 때만 설치 기능(미리보기 포함)이 켜지고
 ///   - 설치에 성공했을 때 발판 1개를 소모합니다. (설치가 안 되면 소모하지 않음)
 ///
@@ -27,14 +27,16 @@ public class PlatformPlacer : MonoBehaviour
     private Transform cameraPivot;
 
     [Header("인벤토리 연동")]
-    [SerializeField] private bool useInventory = false;  // 켜면 인벤토리 기준으로 설치·소모 (꺼두면 무한 설치)
+    [SerializeField, Tooltip("켜면 항상 인벤토리 기준. 꺼져 있어도 씬에 인벤토리(PlatformInventoryBridge)가 있으면 자동으로 인벤토리 기준")]
+    private bool useInventory = false;
 
     [Header("설치 위치")]
-    [SerializeField] private float placeDistance = 2.5f;   // 카메라 앞 거리 (3m 이내로 유지)
-    [SerializeField] private float verticalOffset = -0.8f; // 위아래 보정 (음수 = 눈높이보다 아래)
+    [SerializeField] private float placeDistance = 2.5f;   // 에임 방향으로 이만큼 앞에 설치 (3m 이내로 유지)
 
     [Header("파괴(선택) 설정")]
     [SerializeField] private float selectDistance = 1.5f;  // 조준 대상 최대 거리 (카메라 기준)
+    [SerializeField, Tooltip("조준선이 닿는 범위를 조금 넓혀 줍니다 (작은 발판도 쉽게 선택)")]
+    private float selectAimRadius = 0.15f;
 
     [Header("미리보기 색")]
     [SerializeField] private Color validColor = new Color(0.2f, 0.9f, 0.2f);
@@ -54,6 +56,10 @@ public class PlatformPlacer : MonoBehaviour
     private readonly Collider[] overlapBuffer = new Collider[16];
     private readonly RaycastHit[] rayBuffer = new RaycastHit[16];
     private string lastReason = "";
+
+    // 인벤토리를 쓸지 여부: 체크했거나, 씬에 인벤토리가 있으면 자동으로 사용
+    private bool UseInventoryNow => useInventory || PlatformInventoryLocator.Current != null;
+    private bool warnedNoInventory;
 
     private void Awake()
     {
@@ -122,9 +128,16 @@ public class PlatformPlacer : MonoBehaviour
     private void HandlePlacement(Mouse mouse)
     {
         // 인벤토리 연동: 손에 발판이 없으면 설치 기능 자체를 끔 (미리보기도 숨김)
-        if (useInventory)
+        if (UseInventoryNow)
         {
             IPlatformInventory inv = PlatformInventoryLocator.Current;
+
+            if (inv == null && !warnedNoInventory)
+            {
+                Debug.LogWarning("[PlatformPlacer] Use Inventory가 켜져 있는데 씬에 PlatformInventoryBridge가 없어서 발판을 설치할 수 없습니다.");
+                warnedNoInventory = true;
+            }
+
             if (inv == null || !inv.IsHoldingPlatform)
             {
                 preview.SetActive(false);
@@ -132,10 +145,9 @@ public class PlatformPlacer : MonoBehaviour
             }
         }
 
+        // 에임 위치: 카메라 정면(조준선) 방향으로 placeDistance만큼 앞
         Vector3 eye = cameraPivot.position;
-        Vector3 pos = eye
-                      + cameraPivot.forward * placeDistance
-                      + Vector3.up * verticalOffset;
+        Vector3 pos = eye + cameraPivot.forward * placeDistance;
         Quaternion rot = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);  // 항상 수평
 
         preview.SetActive(true);
@@ -168,7 +180,7 @@ public class PlatformPlacer : MonoBehaviour
         if (canPlace && mouse.leftButton.wasPressedThisFrame)
         {
             // 설치할 수 있는 상태일 때만 1개 소모. 소모에 실패하면(수량 0 등) 설치하지 않음
-            if (useInventory && !PlatformInventoryLocator.Current.TryConsumeHeldPlatform())
+            if (UseInventoryNow && !PlatformInventoryLocator.Current.TryConsumeHeldPlatform())
                 return;
 
             GameObject placed = Instantiate(platformPrefab, pos, rot);
@@ -233,13 +245,16 @@ public class PlatformPlacer : MonoBehaviour
         }
 
         // 조준 대상(1.5m 이내, 가장 가까운 1개)이 설치된 발판이면 → 선택 모드 진입
-        PlacedPlatform target = FindAimedPlatform();
+        PlacedPlatform target = FindAimedPlatform(out string info);
         if (target != null)
         {
             selected = target;
             selected.SetSelected(true);
         }
         // 대상이 없거나 발판이 아니면 무반응
+
+        if (debugPlacement)
+            Debug.Log("[파괴] 우클릭: " + info);
     }
 
     private void HandleLeftClickInSelectMode()
@@ -248,17 +263,30 @@ public class PlatformPlacer : MonoBehaviour
 
         // 모드 조건 재검증: 대상이 아직 1.5m 이내에 있는가?
         bool inRange = false;
+        float distance = -1f;
         if (target != null && target.BodyCollider != null)
         {
             Vector3 closest = target.BodyCollider.ClosestPoint(cameraPivot.position);
-            inRange = Vector3.Distance(cameraPivot.position, closest) <= selectDistance;
+            distance = Vector3.Distance(cameraPivot.position, closest);
+            inRange = distance <= selectDistance;
         }
 
         CancelMode();   // 모드 해제 (색 원래대로)
 
         if (inRange)
+        {
             target.Break();   // 발판 파괴
-        // 범위를 벗어났으면 파괴 없이 모드만 해제
+            if (debugPlacement)
+                Debug.Log("[파괴] 발판 파괴됨");
+        }
+        else if (debugPlacement)
+        {
+            // 범위를 벗어났으면 파괴 없이 모드만 해제
+            Debug.Log(target == null
+                ? "[파괴] 선택한 발판이 이미 사라져서 선택만 해제"
+                : "[파괴] 선택한 발판이 범위 밖이라 파괴하지 않고 선택만 해제 (거리 "
+                  + distance.ToString("F2") + "m > " + selectDistance.ToString("F1") + "m)");
+        }
     }
 
     /// <summary>선택 모드 해제. 낙하 시작 시(3.4)에도 이 함수를 호출하면 됩니다.</summary>
@@ -269,28 +297,46 @@ public class PlatformPlacer : MonoBehaviour
         selected = null;
     }
 
-    private PlacedPlatform FindAimedPlatform()
+    private PlacedPlatform FindAimedPlatform(out string info)
     {
-        // 에임 방향으로 쏴서 (내 몸을 빼고) 맨 처음 맞은 물체가 설치된 발판인지 확인
-        int count = Physics.RaycastNonAlloc(
-            cameraPivot.position, cameraPivot.forward, rayBuffer, selectDistance, ~0, QueryTriggerInteraction.Ignore);
+        // 에임 방향으로 (조금 굵은 선으로) 쏴서, 내 몸을 빼고 맨 처음 맞은 물체가 설치된 발판인지 확인
+        int count = Physics.SphereCastNonAlloc(
+            cameraPivot.position, selectAimRadius, cameraPivot.forward, rayBuffer,
+            selectDistance, ~0, QueryTriggerInteraction.Ignore);
 
         float nearest = float.MaxValue;
-        Collider nearestCol = null;
+        RaycastHit best = default;
+        bool found = false;
 
         for (int i = 0; i < count; i++)
         {
-            Collider c = rayBuffer[i].collider;
-            if (IsMine(c)) continue;
+            if (IsMine(rayBuffer[i].collider)) continue;
             if (rayBuffer[i].distance < nearest)
             {
                 nearest = rayBuffer[i].distance;
-                nearestCol = c;
+                best = rayBuffer[i];
+                found = true;
             }
         }
 
-        // 바닥·벽이 더 가까우면 발판이 아니므로 null
-        return nearestCol != null ? nearestCol.GetComponentInParent<PlacedPlatform>() : null;
+        if (!found)
+        {
+            info = "조준한 방향 " + selectDistance.ToString("F1")
+                   + "m 안에 아무것도 없음 → 발판에 더 가까이 가서 조준선(+)을 발판에 맞춰 보세요";
+            return null;
+        }
+
+        PlacedPlatform platform = best.collider.GetComponentInParent<PlacedPlatform>();
+        if (platform == null)
+        {
+            // 바닥·벽이 발판보다 먼저 맞은 경우
+            info = "발판이 아닌 물체가 먼저 맞음: " + best.collider.name
+                   + " (거리 " + best.distance.ToString("F2") + "m)";
+            return null;
+        }
+
+        info = "발판 선택됨 (거리 " + best.distance.ToString("F2") + "m) → 좌클릭하면 파괴";
+        return platform;
     }
 
     private void SetPreviewColor(Color color)
