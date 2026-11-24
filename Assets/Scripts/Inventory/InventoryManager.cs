@@ -180,6 +180,12 @@ namespace Project.Inventory
             return space;
         }
 
+        // 아이템 id로 ItemData를 찾음 (화면 표시용). 없으면 null
+        public ItemData GetItemData(string itemId)
+        {
+            return itemDatabase != null ? itemDatabase.Find(itemId) : null;
+        }
+
         private ItemData FindItem(string itemId)
         {
             if (itemDatabase == null)

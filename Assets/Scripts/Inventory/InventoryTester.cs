@@ -150,6 +150,14 @@ namespace Project.Inventory
             else Debug.LogError($"{failCount}개 테스트 실패");
         }
 
+        [ContextMenu("Expand One Slot")]
+        private void ExpandOneSlot()
+        {
+            if (!Application.isPlaying) return;
+
+            inventory.TryExpandSlots(1);
+        }
+
         private void Check(bool ok, string label)
         {
             if (ok)
