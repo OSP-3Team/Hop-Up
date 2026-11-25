@@ -76,10 +76,10 @@ public class HeightBar : MonoBehaviour
     private void TryFindReferences()
     {
         if (player == null)
-            player = FindFirstObjectByType<PlayerController>();
+            player = FindAnyObjectByType<PlayerController>();
 
         if (fallController == null)
-            fallController = FindFirstObjectByType<FallController>();
+            fallController = FindAnyObjectByType<FallController>();
     }
 
     private void UpdateFill(float ratio)
