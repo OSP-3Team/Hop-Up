@@ -1911,7 +1911,7 @@ MonoBehaviour:
   settingsButton: {fileID: 694778283}
   quitButton: {fileID: 1192547269}
   continueLabel: {fileID: 1668403236}
-  gameSceneName: Sandbox_Inventory
+  gameSceneName: MainGame
   saveFileName: save.json
   debugForceSaveExists: 0
 --- !u!4 &2083615683
