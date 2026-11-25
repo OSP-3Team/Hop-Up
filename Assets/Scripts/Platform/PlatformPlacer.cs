@@ -96,8 +96,8 @@ public class PlatformPlacer : MonoBehaviour
 
     private void Update()
     {
-        // 메뉴·창이 열려 있으면(InputEnabled == false) 입력 무시, 미리보기 숨김
-        if (!player.InputEnabled)
+        // 메뉴·창이 열려 있거나(InputEnabled == false), 낙하 중(ActionInputEnabled == false)이면 입력 무시, 미리보기 숨김
+        if (!player.InputEnabled || !player.ActionInputEnabled)   // [3.4]
         {
             preview.SetActive(false);
             return;

@@ -1366,6 +1366,8 @@ GameObject:
   - component: {fileID: 7585466275276210886}
   - component: {fileID: 4402056289579811835}
   - component: {fileID: 2127202712685915584}
+  - component: {fileID: 7763957703991224272}
+  - component: {fileID: 2643362872443580495}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1438,7 +1440,6 @@ MonoBehaviour:
   airControl: 1
   groundCheckRadius: 0.2
   groundCheckDistance: 0.2
-  logGroundState: 1
   mouseSensitivity: 0.1
   maxLookAngle: 85
 --- !u!114 &4402056289579811835
@@ -1457,8 +1458,8 @@ MonoBehaviour:
   cameraPivot: {fileID: 3084769470409354505}
   useInventory: 0
   placeDistance: 2.5
-  verticalOffset: -0.8
   selectDistance: 2.5
+  selectAimRadius: 0.15
   validColor: {r: 0.2, g: 0.9, b: 0.2, a: 1}
   invalidColor: {r: 0.9, g: 0.2, b: 0.2, a: 1}
   debugPlacement: 1
@@ -1478,6 +1479,40 @@ MonoBehaviour:
   arm: {fileID: 0}
   positionInView: {x: 0.3, y: -0.2, z: 0.08}
   rotationOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &7763957703991224272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5387538321062996237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e30eccaa1b4504c4bb0cdefdc5a20601, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FallController
+  inputGateDistance: 2
+  penaltyDistance: 10
+  milestoneHeights:
+  - 75
+  - 150
+  - 225
+  endingHeight: 300
+  groundedHoldTime: 0.1
+  debugLog: 1
+--- !u!114 &2643362872443580495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5387538321062996237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5623ccdb96e05954ca43335598216042, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerBuffs
+  fallProtectionCharges: 0
 --- !u!1 &5514398917171035608
 GameObject:
   m_ObjectHideFlags: 0
