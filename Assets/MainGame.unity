@@ -178,8 +178,53 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5387538321062996237, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 162013326}
+    - targetCorrespondingSourceObject: {fileID: 5387538321062996237, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 162013332}
   m_SourcePrefab: {fileID: 100100000, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
+--- !u!1 &162013325 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5387538321062996237, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
+  m_PrefabInstance: {fileID: 162013324}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &162013326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162013325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9be65b2fe43b7cb4a92658e444ad5282, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HopUp.FarmEconomy.FarmPlantingInteractor
+  viewCamera: {fileID: 0}
+  seedItemId: seed_normal
+  reach: 6
+  logResult: 1
+  looking: {fileID: 0}
+--- !u!114 &162013332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162013325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95a8b8c7d4a78f84980deb437be1339a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HopUp.FarmEconomy.FarmPlantingInteractor
+  viewCamera: {fileID: 0}
+  seedItemId: seed_normal
+  reach: 6
+  logResult: 1
+  useLeftClick: 0
 --- !u!1 &414146017
 GameObject:
   m_ObjectHideFlags: 0
@@ -1571,6 +1616,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1881586602}
   - component: {fileID: 1881586601}
+  - component: {fileID: 1881586603}
   m_Layer: 0
   m_Name: EconomyHub
   m_TagString: Untagged
@@ -1609,6 +1655,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1881586603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881586600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 264b5e5866e7a89488cedaaef4809dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HopUp.FarmEconomy::HopUp.FarmEconomy.FarmPlantingTester
+  seedItemId: seed_normal
+  colorPlots: 1
 --- !u!1001 &8252862873087778884
 PrefabInstance:
   m_ObjectHideFlags: 0
