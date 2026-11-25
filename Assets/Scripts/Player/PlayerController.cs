@@ -30,8 +30,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float groundCheckRadius = 0.1f;
     [SerializeField] private float groundCheckDistance = 0.08f;
 
-    [SerializeField] private bool logGroundState = true;
-
     [Header("시점")]
     [SerializeField] private float mouseSensitivity = 0.1f;
     [SerializeField] private float maxLookAngle = 85f;
@@ -41,6 +39,12 @@ public class PlayerController : MonoBehaviour
     public bool IsGrounded { get; private set; }
     public float GroundedTime { get; private set; }
     public float FootHeight => transform.position.y;
+
+    // [3.4] 낙하 중 클릭·Space 같은 행동 입력을 막을 때 FallController가 끄고 켬 (시점·이동은 영향 없음)
+    public bool ActionInputEnabled { get; set; } = true;
+
+    // [3.4] 지금 밟고 있는 바닥의 콜라이더 (공중이면 null). 착지한 곳이 설치 발판인지 확인할 때 사용
+    public Collider GroundCollider { get; private set; }
 
     private CharacterController cc;
 
@@ -79,6 +83,7 @@ public class PlayerController : MonoBehaviour
     {
         bool touching = false;
         string groundName = "";
+        Collider groundCollider = null;   // [3.4]
 
         if (verticalVelocity <= 0f)
         {
@@ -101,11 +106,13 @@ public class PlayerController : MonoBehaviour
                 {
                     touching = true;
                     groundName = hit.collider.name;
+                    groundCollider = hit.collider;   // [3.4]
                 }
             }
         }
 
         IsGrounded = touching;
+        GroundCollider = touching ? groundCollider : null;   // [3.4]
 
         GroundedTime = IsGrounded
             ? GroundedTime + Time.deltaTime
@@ -161,7 +168,7 @@ public class PlayerController : MonoBehaviour
                 (kb.wKey.isPressed ? 1f : 0f)
                 - (kb.sKey.isPressed ? 1f : 0f);
 
-            jumpPressed = kb.spaceKey.wasPressedThisFrame;
+            jumpPressed = kb.spaceKey.wasPressedThisFrame && ActionInputEnabled;   // [3.4] 낙하 중 Space 무시
         }
 
         // 대각선 이동 속도 제한
