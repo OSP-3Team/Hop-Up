@@ -19,7 +19,7 @@ namespace HopUp.FarmEconomy
         [SerializeField] GameObject emptyVisual;
         [SerializeField] GameObject growingVisual;
         [SerializeField] GameObject readyVisual;
-        [Tooltip("자라는 동안 0.2~1로 스케일이 커질 오브젝트(선택)")]
+        [Tooltip("자라는 동안 성장 절반 전 0.4, 이후 0.7로 스케일이 바뀔 오브젝트(선택)")]
         [SerializeField] Transform growScaleTarget;
 
         EconomyHub hub;
@@ -90,8 +90,9 @@ namespace HopUp.FarmEconomy
 
         void Update()
         {
-            if (bound && growScaleTarget != null && Model.Phase == PlotPhase.Growing)
-                growScaleTarget.localScale = Vector3.one * Mathf.Lerp(0.2f, 1f, Model.Progress01);
+            if (!bound || growScaleTarget == null || Model.Phase != PlotPhase.Growing) return;
+            // 성장 절반 전은 새싹, 이후는 중간 크기. 다 자란 모습은 Refresh가 readyVisual로 바꾼다
+            growScaleTarget.localScale = Vector3.one * (Model.Progress01 < 0.5f ? 0.4f : 0.7f);
         }
 
         static void SetActive(GameObject go, bool active)
