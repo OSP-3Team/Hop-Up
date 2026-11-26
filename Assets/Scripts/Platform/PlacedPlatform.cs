@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -17,6 +18,28 @@ public class PlacedPlatform : MonoBehaviour
     private Color[] originalColors;
 
     public Collider BodyCollider { get; private set; }
+
+    // [종류별 발판·세이브] 어떤 아이템(발판 종류)으로 설치했는지. 예: scaffold_1
+    public string KindId { get; private set; } = "default";
+
+    // [세이브] 씬에 있는 설치된 발판 전체 목록
+    private static readonly List<PlacedPlatform> all = new List<PlacedPlatform>();
+    public static IReadOnlyList<PlacedPlatform> All => all;
+
+    public void SetKind(string kindId)
+    {
+        if (!string.IsNullOrEmpty(kindId)) KindId = kindId;
+    }
+
+    private void OnEnable()
+    {
+        all.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        all.Remove(this);
+    }
 
     private void Awake()
     {

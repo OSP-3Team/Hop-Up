@@ -80,7 +80,7 @@ namespace Project.UI
         {
             GameStartRequest.Mode = mode;
             Debug.Log($"[MainMenu] {mode} 시작 → {gameSceneName}");
-            SceneManager.LoadScene(gameSceneName);
+            SceneManager.LoadScene(gameSceneName); // 오프닝은 게임 씬의 OpeningSequence가 GameStartRequest를 보고 재생
         }
 
         private void OnSettingsClicked()
