@@ -521,7 +521,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4402056289579811835, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
       propertyPath: useInventory
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5387538321062996237, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
       propertyPath: m_Name
@@ -691,6 +691,52 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 162013325}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &282122877
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 282122879}
+  - component: {fileID: 282122878}
+  m_Layer: 0
+  m_Name: PlatformInventoryBridge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &282122878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 282122877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2e7cee86a95e23458507c6a160fc9dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Inventory.PlatformInventoryBridge
+  inventory: {fileID: 1312631788}
+  hotbar: {fileID: 1312631790}
+--- !u!4 &282122879
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 282122877}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.06735, y: 0, z: -2.23193}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &331680947
 GameObject:
@@ -5661,3 +5707,4 @@ SceneRoots:
   - {fileID: 1782664007}
   - {fileID: 1312631793}
   - {fileID: 1046425743}
+  - {fileID: 282122879}
