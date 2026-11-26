@@ -53,6 +53,9 @@ namespace Project.Core
         [SerializeField, Tooltip("착지 직전 검게 가리는 시간(초). 1인칭이 된 뒤 같은 시간 동안 다시 밝아짐")]
         private float fadeDuration = 0.3f;
 
+        // EndingSequence가 같은 Player를 씀
+        internal Transform Player => player;
+
         private async void Start()
         {
             if (!GameStartRequest.ShouldPlayOpening) return;
@@ -236,7 +239,7 @@ namespace Project.Core
         }
 
         /// <summary>검은 페이드 화면과 오른쪽 아래 건너뛰기 안내. 오프닝이 끝나면 통째로 지움.</summary>
-        private static Image CreateFadeOverlay(out GameObject skipHint)
+        internal static Image CreateFadeOverlay(out GameObject skipHint)
         {
             var go = new GameObject("OpeningFade", typeof(Canvas), typeof(CanvasScaler), typeof(Image));
             var canvas = go.GetComponent<Canvas>();
@@ -265,20 +268,20 @@ namespace Project.Core
             return image;
         }
 
-        private static void SetAlpha(Image image, float a)
+        internal static void SetAlpha(Image image, float a)
         {
             Color c = image.color;
             c.a = a;
             image.color = c;
         }
 
-        private static bool SkipPressed()
+        internal static bool SkipPressed()
         {
             Keyboard kb = Keyboard.current;
             return kb != null && (kb.spaceKey.wasPressedThisFrame || kb.escapeKey.wasPressedThisFrame);
         }
 
-        private void SetControls(bool on)
+        internal void SetControls(bool on)
         {
             if (disableDuringOpening == null) return;
             foreach (Behaviour b in disableDuringOpening)

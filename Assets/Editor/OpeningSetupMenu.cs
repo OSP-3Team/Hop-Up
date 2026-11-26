@@ -17,8 +17,8 @@ public static class OpeningSetupMenu
     const string ScenePath = "Assets/MainGame.unity";
     const string MoonMaterialPath = "Assets/Materials/Moon.mat";
     const string MoonTexturePath = "Assets/Textures/MoonSurface.png"; // 구용 위경도 텍스처 (크레이터·바다를 코드로 생성)
-    const float MoonHeight = 450f;    // 엔딩 높이(300m)보다 위: 지상에서 높이 떠 보이고, 꼭대기에 올라가도 여전히 올려다보게
-    const float MoonDiameter = 80f;
+    const float MoonDiameter = 30f;
+    const float MoonHeight = 310f + MoonDiameter / 2f; // 바닥이 엔딩 높이(300m) 10m 위: 꼭대기에서 달이 바로 머리 위, 엔딩에서 토끼가 달로 올라감
     // 스폰 정면 수평 거리 = 반지름 + 2m: 오프닝에서 토끼가 달 가장자리에서 미끄러져 스폰 바로 위로 떨어짐
     const float MoonDistance = MoonDiameter / 2f + 2f;
 
@@ -83,6 +83,7 @@ public static class OpeningSetupMenu
         for (int i = 0; i < toDisable.Count; i++)
             arr.GetArrayElementAtIndex(i).objectReferenceValue = toDisable[i];
         so.ApplyModifiedPropertiesWithoutUndo();
+        opening.AddComponent<EndingSequence>(); // 엔딩은 오프닝의 Player·Moon·끌 컴포넌트를 같이 씀
 
         Debug.Log($"[SetupOpening] Moon {moon.transform.position}, 끌 컴포넌트 {toDisable.Count}개 연결");
         return true;
