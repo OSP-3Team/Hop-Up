@@ -690,6 +690,74 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
   m_PrefabInstance: {fileID: 112017854}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &120286348
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 120286351}
+  - component: {fileID: 120286350}
+  - component: {fileID: 120286349}
+  m_Layer: 0
+  m_Name: GameSystems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &120286349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120286348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7891e477de351e94ca11cb6f35609c80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayLogger
+  player: {fileID: 0}
+  placer: {fileID: 0}
+  logFileName: playlog.csv
+  debugLog: 1
+--- !u!114 &120286350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120286348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18b7fd67317f79479ca8b55c71c47ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveManager
+  player: {fileID: 0}
+  fall: {fileID: 0}
+  placer: {fileID: 0}
+  inventory: {fileID: 0}
+  saveFileName: save.json
+  autoSaveInterval: 300
+  debugLog: 1
+--- !u!4 &120286351
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120286348}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.93162, y: 0.69516, z: -0.21586}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &135742757
 GameObject:
   m_ObjectHideFlags: 0
@@ -1907,12 +1975,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 282122877}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.06735, y: 0, z: -2.23193}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1039.0769, y: -498.96155, z: -3.9477038}
+  m_LocalScale: {x: 1.7687399, y: 1.7687399, z: 1.7687399}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1046425743}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &331680947
 GameObject:
@@ -7151,6 +7219,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 282122879}
   - {fileID: 807163785}
   - {fileID: 345026818}
   - {fileID: 2009837795}
@@ -9715,14 +9784,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95a8b8c7d4a78f84980deb437be1339a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HopUp.FarmEconomy.FarmPlantingInteractor
-  viewCamera: {fileID: 0}
-  seedItemId: seed_normal
-  reach: 6
-  logResult: 1
-  useLeftClick: 0
-  looking: {fileID: 0}
-  player: {fileID: 0}
-  uiMode: 0
 --- !u!114 &1651671723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11067,6 +11128,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1881586603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881586600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 264b5e5866e7a89488cedaaef4809dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HopUp.FarmEconomy::HopUp.FarmEconomy.FarmPlantingTester
+  seedItemId: seed_normal
+  colorPlots: 1
 --- !u!1001 &1893151312
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11301,20 +11376,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9e9e8563878e8f04cae0f82358eb143f, type: 3}
   m_PrefabInstance: {fileID: 1914330233}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1881586603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1881586600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 264b5e5866e7a89488cedaaef4809dd1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: HopUp.FarmEconomy::HopUp.FarmEconomy.FarmPlantingTester
-  seedItemId: seed_normal
-  colorPlots: 1
 --- !u!1 &1949295947
 GameObject:
   m_ObjectHideFlags: 0
@@ -12952,18 +13013,18 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 357140793}
+  - {fileID: 1046425743}
+  - {fileID: 162013324}
+  - {fileID: 1655573230}
   - {fileID: 820000002}
   - {fileID: 1881586602}
   - {fileID: 1648464043}
   - {fileID: 694105955}
   - {fileID: 971928296}
   - {fileID: 1831863354}
-  - {fileID: 162013324}
   - {fileID: 1751764595}
-  - {fileID: 1655573230}
   - {fileID: 1782664007}
   - {fileID: 1312631793}
-  - {fileID: 1046425743}
-  - {fileID: 282122879}
+  - {fileID: 120286351}
   - {fileID: 1826857668}
   - {fileID: 78779138}
