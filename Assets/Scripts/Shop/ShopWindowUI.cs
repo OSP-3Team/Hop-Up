@@ -1,17 +1,25 @@
 using System;
 using System.Collections.Generic;
+using HopUp.FarmEconomy;
+using Project.Inventory;
+using Project.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using Project.UI;
 
 namespace Project.Shop
 {
     public class ShopWindowUI : MonoBehaviour, IUIWindow
     {
-        [SerializeField] private ShopCatalog catalog;
-        [SerializeField] private CoinWallet wallet;
+        [Header("데이터")]
+        [SerializeField, Tooltip("아이콘을 찾을 때 사용")]
+        private InventoryManager inventory;
+        [SerializeField] private Sprite slotIcon;
+        [SerializeField] private Sprite botIcon;
+        [SerializeField] private Sprite plotIcon;
+        [SerializeField] private Sprite carrotIcon;
 
+        [Header("화면")]
         [SerializeField, Tooltip("열고 닫을 패널. 이 스크립트가 붙은 오브젝트와 달라야 한다")]
         private GameObject windowRoot;
 
@@ -25,20 +33,29 @@ namespace Project.Shop
         [SerializeField] private Color selectedTabColor = new Color(0.95f, 0.75f, 0.2f, 1f);
 
         private readonly List<ShopEntryUI> entryUIs = new List<ShopEntryUI>();
+        private readonly Dictionary<ShopEntry, ShopItem> itemOf = new Dictionary<ShopEntry, ShopItem>();
+        private readonly Dictionary<ShopEntry, string> sellCropOf = new Dictionary<ShopEntry, string>();   // ← 이 줄 추가
         private ShopCategory currentCategory = ShopCategory.Platform;
         private ShopEntry selectedEntry;
+        private EconomyHub hub;
 
         public bool IsOpen => windowRoot.activeSelf;
         public ShopCategory CurrentCategory => currentCategory;
         public ShopEntry SelectedEntry => selectedEntry;
 
-        // 창이 열리고 닫힐 때 발생 (열렸으면 true)
+        /// <summary>선택한 항목의 FarmEconomy 상품 (구매 처리용)</summary>
+        public ShopItem SelectedItem =>
+            selectedEntry != null && itemOf.TryGetValue(selectedEntry, out var item) ? item : null;
+        
+        /// <summary>판매 탭에서 선택한 당근 종류 (normal, fast, golden)</summary>
+        public string SelectedSellCropId =>
+            selectedEntry != null && sellCropOf.TryGetValue(selectedEntry, out var id) ? id : null;
+
+        /// <summary>판매할 수 있는 당근 개수. 당근이 인벤토리 아이템으로 바뀌면 이 줄만 고친다.</summary>
+        public int OwnedCount(string cropId) => hub != null ? hub.Carrots.Count(cropId) : 0;
+
         public event Action<bool> OnOpenChanged;
-
-        // 카테고리가 바뀔 때 발생
         public event Action<ShopCategory> OnCategoryChanged;
-
-        // 항목을 클릭해서 선택했을 때 발생 (구매 처리는 5.4에서 이 이벤트를 받아서)
         public event Action<ShopEntry> OnEntrySelected;
 
         private void Awake()
@@ -48,19 +65,24 @@ namespace Project.Shop
                 int index = i; // 클릭한 탭 번호를 기억하기 위한 복사
                 tabButtons[i].onClick.AddListener(() => SelectCategory((ShopCategory)index));
             }
-
             windowRoot.SetActive(false);
+        }
+
+        private void Start()
+        {
+            hub = EconomyHub.Instance;
+            if (hub == null)
+            {
+                Debug.LogWarning("[ShopWindowUI] EconomyHub를 찾지 못했습니다.");
+                return;
+            }
+            hub.Wallet.Changed += OnCoinsChanged;
             SelectCategory(ShopCategory.Platform);
         }
 
-        private void OnEnable()
+        private void OnDestroy()
         {
-            wallet.OnCoinsChanged += RefreshPrices;
-        }
-
-        private void OnDisable()
-        {
-            wallet.OnCoinsChanged -= RefreshPrices;
+            if (hub != null) hub.Wallet.Changed -= OnCoinsChanged;
         }
 
         private void Update()
@@ -77,7 +99,7 @@ namespace Project.Shop
             if (windowRoot.activeSelf == open) return;
 
             windowRoot.SetActive(open);
-            if (open) RefreshPrices();
+            if (open) RebuildList(); // 지대에 따라 발판 가격이 바뀌니 열 때마다 새로 만든다
             OnOpenChanged?.Invoke(open);
         }
 
@@ -98,7 +120,23 @@ namespace Project.Shop
             OnEntrySelected?.Invoke(entry);
         }
 
-        // 현재 카테고리의 항목으로 목록을 새로 만듦
+        /// <summary>구매 후 가격·상태를 새로 고친다. 선택한 항목은 유지한다.</summary>
+        public void RefreshKeepSelection()
+        {
+            string keepId = selectedEntry != null ? selectedEntry.id : null;
+            selectedEntry = null;
+            RebuildList();
+
+            if (keepId != null)
+            {
+                foreach (var ui in entryUIs)
+                    if (ui.Entry.id == keepId) { selectedEntry = ui.Entry; break; }
+            }
+            RefreshSelection();
+            OnEntrySelected?.Invoke(selectedEntry);
+        }
+
+        // 현재 카테고리의 상품으로 목록을 새로 만듦
         private void RebuildList()
         {
             foreach (var ui in entryUIs)
@@ -107,24 +145,96 @@ namespace Project.Shop
                 Destroy(ui.gameObject);
             }
             entryUIs.Clear();
+            itemOf.Clear();
+            sellCropOf.Clear();
 
-            foreach (var entry in catalog.GetEntries(currentCategory))
+            if (hub == null) return;
+
+            if (currentCategory == ShopCategory.Sell)
             {
-                var ui = Instantiate(entryPrefab, entryParent);
-                ui.Setup(entry, SelectEntry);
-                entryUIs.Add(ui);
+                // 판매 탭: 당근 종류별로 보유 개수와 판매가를 보여 준다
+                foreach (CropDef crop in hub.Config.crops)
+                {
+                    var entry = new ShopEntry
+                    {
+                        id = "sell_" + crop.id,
+                        category = currentCategory,
+                        displayName = $"{crop.name} (보유 {OwnedCount(crop.id)})",
+                        price = hub.Sales.GetSellPrice(crop.id),
+                        icon = carrotIcon,
+                    };
+                    AddEntry(entry);
+                    sellCropOf[entry] = crop.id;
+                }
+            }
+            else
+            {
+                foreach (var item in hub.Shop.Items)
+                {
+                    if (CategoryOf(item.Kind) != currentCategory) continue;
+
+                    var entry = new ShopEntry
+                    {
+                        id = item.Id,
+                        category = currentCategory,
+                        displayName = item.DisplayName,
+                        price = hub.Shop.GetUnitPrice(item),
+                        item = item.InventoryItemId != null ? inventory.GetItemData(item.InventoryItemId) : null,
+                    };
+                    entry.icon = IconOf(item, entry.item);
+                    AddEntry(entry);
+                    itemOf[entry] = item;
+                }
             }
 
             RefreshPrices();
             RefreshSelection();
         }
 
-        // 코인이 모자란 항목은 가격을 빨간색으로 (판매 탭은 돈을 받는 쪽이라 제외)
+        private void AddEntry(ShopEntry entry)
+        {
+            var ui = Instantiate(entryPrefab, entryParent);
+            ui.Setup(entry, SelectEntry);
+            entryUIs.Add(ui);
+        }
+        // ShopCategory 순서: 0 발판, 1 씨앗·재료, 2 확장, 3 꾸미기, 4 판매
+        private static ShopCategory CategoryOf(ShopItemKind kind)
+        {
+            switch (kind)
+            {
+                case ShopItemKind.Scaffold: return (ShopCategory)0;
+                case ShopItemKind.Seed: return (ShopCategory)1;
+                default: return (ShopCategory)2; // 인벤토리 칸, 농사 봇, 밭 확장
+            }
+        }
+
+        private Sprite IconOf(ShopItem item, ItemData data)
+        {
+            switch (item.Kind)
+            {
+                case ShopItemKind.InventorySlot: return slotIcon;
+                case ShopItemKind.Bot: return botIcon;
+                case ShopItemKind.PlotExpansion: return plotIcon;
+                default: return data != null ? data.icon : null;
+            }
+        }
+
+        private void OnCoinsChanged(int coins) => RefreshPrices();
+
+        // 살 수 없는 항목(코인 부족, 잠김, 한도 도달)은 가격을 빨간색으로
         private void RefreshPrices()
         {
+            if (hub == null) return;
             bool isSell = currentCategory == ShopCategory.Sell;
             foreach (var ui in entryUIs)
-                ui.SetPriceShort(!isSell && wallet.Coins < ui.Entry.price);
+            {
+                if (isSell || !itemOf.TryGetValue(ui.Entry, out var item))
+                {
+                    ui.SetPriceShort(false);
+                    continue;
+                }
+                ui.SetPriceShort(hub.Shop.GetMaxPurchasable(item) <= 0);
+            }
         }
 
         private void RefreshSelection()
