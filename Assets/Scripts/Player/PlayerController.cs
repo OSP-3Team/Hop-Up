@@ -26,6 +26,12 @@ public class PlayerController : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float airControl = 1f;
 
+    [Header("테스트용 날기 모드")]
+    [SerializeField, Tooltip("켜면 중력 없이 날 수 있음. Space 상승 / Left Shift 하강 / WASD 수평 이동. 꺼도 그 높이에서 새 낙하로 계산됨")]
+    private bool flyMode = false;   // [날기 모드]
+    [SerializeField, Tooltip("날기 모드에서 위·아래 이동 속도")]
+    private float flyVerticalSpeed = 6f;   // [날기 모드]
+
     [Header("접지 판정")]
     [SerializeField] private float groundCheckRadius = 0.1f;
     [SerializeField] private float groundCheckDistance = 0.08f;
@@ -45,6 +51,9 @@ public class PlayerController : MonoBehaviour
 
     // [3.4] 지금 밟고 있는 바닥의 콜라이더 (공중이면 null). 착지한 곳이 설치 발판인지 확인할 때 사용
     public Collider GroundCollider { get; private set; }
+
+    // [날기 모드] 지금 날기 모드인가 (FallController가 낙하 계산을 멈추는 데 사용)
+    public bool IsFlying => flyMode;
 
     private CharacterController cc;
 
@@ -121,6 +130,23 @@ public class PlayerController : MonoBehaviour
 
 
     // =========================================
+    // [8.2 세이브] 불러오기용: 발 위치와 좌우 방향을 지정해서 이동
+    // =========================================
+
+    public void TeleportTo(Vector3 footPosition, float yaw)
+    {
+        if (cc == null) cc = GetComponent<CharacterController>();
+
+        cc.enabled = false;   // CharacterController가 켜져 있으면 위치를 덮어써서 꺼 두고 옮김
+        transform.position = footPosition;
+        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+        cc.enabled = true;
+
+        verticalVelocity = 0f;
+        GroundedTime = 0f;
+    }
+
+    // =========================================
     // 마우스 시점
     // =========================================
 
@@ -173,6 +199,21 @@ public class PlayerController : MonoBehaviour
 
         // 대각선 이동 속도 제한
         input = Vector2.ClampMagnitude(input, 1f);
+
+        // [날기 모드] 중력·점프 대신 Space(상승) / Left Shift(하강)로 자유롭게 이동
+        if (flyMode)
+        {
+            float up = 0f;
+            if (InputEnabled && kb != null)
+                up = (kb.spaceKey.isPressed ? 1f : 0f) - (kb.leftShiftKey.isPressed ? 1f : 0f);
+
+            verticalVelocity = 0f;
+
+            Vector3 flyMove = (transform.right * input.x + transform.forward * input.y) * moveSpeed
+                              + Vector3.up * (up * flyVerticalSpeed);
+            cc.Move(flyMove * Time.deltaTime);
+            return;
+        }
 
         // 지상 및 공중 이동 속도
         float speed = moveSpeed *
