@@ -10,7 +10,7 @@ namespace Project.UI
 
         private void Start()
         {
-            if (windowManager == null) windowManager = FindFirstObjectByType<WindowManager>();
+            if (windowManager == null) windowManager = FindAnyObjectByType<WindowManager>();;
             if (windowManager == null) return;
 
             windowManager.OnAnyWindowOpenChanged += OnWindowOpenChanged;
