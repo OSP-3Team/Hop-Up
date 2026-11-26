@@ -18,10 +18,20 @@ namespace HopUp.FarmEconomy
         static readonly Color GrowingColor = new Color(0.55f, 0.80f, 0.35f);
         static readonly Color ReadyColor = new Color(1.00f, 0.60f, 0.15f);
 
+        static bool panelVisible;
+        static Rect panelRect;
+
+        /// <summary>IMGUI 좌표(왼쪽 위가 원점)의 점이 시험 패널 위에 있는지. 좌클릭 심기가 패널 클릭을 무시할 때 쓴다.</summary>
+        public static bool IsPointerOverPanel(Vector2 guiPoint)
+        {
+            return panelVisible && panelRect.Contains(guiPoint);
+        }
+
         FarmPlot[] plots = new FarmPlot[0];
         MaterialPropertyBlock block;
         int selected;
         string message = "";
+        bool panelOpen = true;
 
         void Start()
         {
@@ -35,6 +45,11 @@ namespace HopUp.FarmEconomy
                     Debug.LogWarning("[FarmPlantingTester] Plot Index가 겹칩니다: " + p.PlotIndex + " (" + p.name + ")", p);
             }
             Debug.Log("[FarmPlantingTester] FarmPlot " + plots.Length + "개 발견");
+        }
+
+        void OnDisable()
+        {
+            panelVisible = false;
         }
 
         void Update()
@@ -67,14 +82,34 @@ namespace HopUp.FarmEconomy
 
         void OnGUI()
         {
+            // F1 키로 패널 열기/닫기 (IMGUI 이벤트라서 새 Input System만 켜져 있어도 동작한다)
+            Event e = Event.current;
+            if (e.type == EventType.KeyDown && e.keyCode == KeyCode.F1)
+            {
+                panelOpen = !panelOpen;
+                e.Use();
+            }
+
             EconomyHub hub = EconomyHub.Instance;
             if (hub == null)
             {
+                panelVisible = false;
                 GUI.Label(new Rect(10, 10, 500, 24), "EconomyHub가 씬에 없습니다");
                 return;
             }
 
-            GUILayout.BeginArea(new Rect(10, 10, 380, 560), GUI.skin.box);
+            if (!panelOpen)
+            {
+                panelRect = new Rect(10, 10, 170, 28);
+                panelVisible = true;
+                if (GUI.Button(panelRect, "농장 패널 열기 (F1)")) panelOpen = true;
+                return;
+            }
+
+            panelRect = new Rect(10, 10, 380, 590);
+            panelVisible = true;
+            GUILayout.BeginArea(panelRect, GUI.skin.box);
+            if (GUILayout.Button("패널 닫기 (F1)")) panelOpen = false;
             GUILayout.Label("농장 시험 패널 (임시)");
             GUILayout.Label("코인 " + hub.Wallet.Coins + " / 당근 " + hub.Carrots.Total
                             + " / 씨앗 " + hub.Inventory.CountOf(seedItemId) + " / 지대 단계 " + hub.Zone.Stage);
