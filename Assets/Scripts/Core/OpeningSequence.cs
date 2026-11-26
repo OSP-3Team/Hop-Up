@@ -1,85 +1,73 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 namespace Project.Core
 {
     /// <summary>
-    /// 새로하기로 게임 씬에 들어왔을 때 맵을 보여 주는 오프닝 카메라 연출.
-    /// 상공(Start Point, 비우면 플레이어 위 Start Height)에서 출발한 카메라가 원래 1인칭 시점까지 내려온 뒤 조작을 돌려준다.
-    /// Space/Esc로 건너뛸 수 있다. 이어하기면 아무것도 하지 않는다.
+    /// 오프닝 씬 전용 카메라 연출. 메인 메뉴에서 새로하기를 누르면 이 씬이 먼저 열린다.
+    /// 카메라가 Start Point에서 End Point로 이동한 뒤 Next Scene(게임 씬)을 불러온다.
+    /// Space/Esc로 건너뛸 수 있다.
     ///
-    /// MainGame 씬의 빈 오브젝트에 부착하고, 오프닝 동안 끌 컴포넌트를 배열에 넣는다:
-    /// PlayerController, PlatformPlacer, Hotbar, InventoryWindowUI, ShopWindowUI
+    /// 오프닝 씬의 빈 오브젝트에 부착. 씬에는 MainCamera 태그가 붙은 카메라와
+    /// 시작·끝 위치를 나타낼 빈 오브젝트 두 개(Start Point, End Point)가 있어야 함.
     /// </summary>
     public class OpeningSequence : MonoBehaviour
     {
-        [SerializeField, Tooltip("오프닝 동안 끌 컴포넌트 (PlayerController, PlatformPlacer, Hotbar, InventoryWindowUI, ShopWindowUI)")]
-        private Behaviour[] disableDuringOpening;
-
-        [SerializeField, Tooltip("카메라 출발 위치·방향 (빈 오브젝트). 비우면 플레이어 시점 바로 위 Start Height에서 아래를 내려다봄")]
+        [SerializeField, Tooltip("카메라가 출발하는 위치·방향")]
         private Transform startPoint;
 
-        [SerializeField, Tooltip("Start Point가 비어 있을 때 출발 높이 (플레이어 시점 기준 위로 몇 m)")]
-        private float startHeight = 300f;
+        [SerializeField, Tooltip("카메라가 도착하는 위치·방향")]
+        private Transform endPoint;
 
-        [SerializeField, Tooltip("내려오는 데 걸리는 시간(초)")]
+        [SerializeField, Tooltip("이동하는 데 걸리는 시간(초)")]
         private float duration = 6f;
+
+        [SerializeField, Tooltip("오프닝이 끝나면 불러올 게임 씬 이름. Build Profiles의 Scene List에 있어야 함")]
+        private string nextSceneName = "MainGame";
 
         private async void Start()
         {
-            if (!GameStartRequest.ShouldPlayOpening) return;
-
-            Camera cam = Camera.main;
-            if (cam == null)
+            // 게임 씬에 잘못 붙어 있으면 자기 씬을 계속 다시 불러오게 되므로 막음
+            if (SceneManager.GetActiveScene().name == nextSceneName)
             {
-                Debug.LogWarning("[Opening] MainCamera 태그가 붙은 카메라가 없어 오프닝을 생략합니다.", this);
+                Debug.LogWarning($"[Opening] {nextSceneName} 씬 안에 붙어 있어 동작하지 않습니다. 오프닝 씬으로 옮기세요.", this);
                 return;
             }
 
-            // 카메라를 부모에서 떼지 않음: PlayerController가 꺼져 있는 동안 부모가 움직이지 않으므로 월드 자세를 되돌리면 원래 자세가 됨
-            Transform camTr = cam.transform;
-            Vector3 endPos = camTr.position;
-            Quaternion endRot = camTr.rotation;
-            Vector3 startPos = startPoint != null ? startPoint.position : endPos + Vector3.up * startHeight;
-            Quaternion startRot = startPoint != null ? startPoint.rotation : Quaternion.LookRotation(Vector3.down, camTr.forward);
-
-            SetControls(false);
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
-            try
+            Camera cam = Camera.main;
+            if (cam == null || startPoint == null || endPoint == null)
             {
-                for (float t = 0f; t < duration && !SkipPressed(); t += Time.deltaTime)
+                Debug.LogWarning("[Opening] 카메라 또는 Start/End Point가 없어 연출 없이 게임 씬으로 넘어갑니다.", this);
+            }
+            else
+            {
+                Transform camTr = cam.transform;
+                try
                 {
-                    float k = Mathf.SmoothStep(0f, 1f, t / duration);
-                    camTr.SetPositionAndRotation(Vector3.Lerp(startPos, endPos, k), Quaternion.Slerp(startRot, endRot, k));
-                    await Awaitable.NextFrameAsync(destroyCancellationToken);
+                    for (float t = 0f; t < duration && !SkipPressed(); t += Time.deltaTime)
+                    {
+                        float k = Mathf.SmoothStep(0f, 1f, t / duration);
+                        camTr.SetPositionAndRotation(
+                            Vector3.Lerp(startPoint.position, endPoint.position, k),
+                            Quaternion.Slerp(startPoint.rotation, endPoint.rotation, k));
+                        await Awaitable.NextFrameAsync(destroyCancellationToken);
+                    }
                 }
-
-                camTr.SetPositionAndRotation(endPos, endRot);
-                // 한 프레임 뒤에 켬: 스킵에 쓴 Space가 같은 프레임에 PlayerController에서 점프로 읽히지 않게
-                await Awaitable.NextFrameAsync(destroyCancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                return; // 연출 중 씬이 바뀌어 파괴됨
+                catch (OperationCanceledException)
+                {
+                    return; // 연출 중 플레이 종료 등으로 파괴됨
+                }
             }
 
-            SetControls(true);
+            SceneManager.LoadScene(nextSceneName);
         }
 
         private static bool SkipPressed()
         {
             Keyboard kb = Keyboard.current;
             return kb != null && (kb.spaceKey.wasPressedThisFrame || kb.escapeKey.wasPressedThisFrame);
-        }
-
-        private void SetControls(bool on)
-        {
-            if (disableDuringOpening == null) return;
-            foreach (Behaviour b in disableDuringOpening)
-                if (b != null) b.enabled = on;
         }
     }
 }

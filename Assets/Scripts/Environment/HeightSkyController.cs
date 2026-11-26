@@ -1,8 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// 메인 카메라(시점)의 현재 높이에 따라 Procedural 스카이박스 색을 바꾼다.
-/// 평소에는 카메라가 플레이어 눈에 붙어 있어 플레이어 높이와 같고, 오프닝처럼 카메라만 움직이는 연출에도 하늘이 따라간다.
+/// 플레이어의 현재 높이에 따라 Procedural 스카이박스 색을 바꾼다.
 /// 떨어지면 낮은 하늘로 돌아간다 (지대 단계 ZoneProgress와는 별개).
 ///
 /// 씬의 빈 오브젝트(Environment)에 부착. 스카이박스는 Skybox/Procedural 셰이더여야 함.
@@ -36,17 +35,16 @@ public class HeightSkyController : MonoBehaviour
     [SerializeField] private AnimationCurve atmosphere = Curve(1f, 1f, 0.8f, 0.45f, 0.15f);
     [SerializeField] private AnimationCurve exposure = Curve(1.3f, 1.3f, 1.2f, 0.9f, 0.5f);
 
-    private Transform cam;
+    private PlayerController player;
     private Material sky;
     private int lastGiStep = -1;
 
     private void Start()
     {
-        Camera main = Camera.main;
-        if (main != null) cam = main.transform;
-        if (cam == null || RenderSettings.skybox == null)
+        player = FindAnyObjectByType<PlayerController>();
+        if (player == null || RenderSettings.skybox == null)
         {
-            Debug.LogWarning("[HeightSky] MainCamera 태그가 붙은 카메라 또는 스카이박스가 없어 비활성화");
+            Debug.LogWarning("[HeightSky] PlayerController 또는 스카이박스가 없어 비활성화");
             enabled = false;
             return;
         }
@@ -58,7 +56,7 @@ public class HeightSkyController : MonoBehaviour
 
     private void Update()
     {
-        float t = Mathf.Clamp01(cam.position.y / maxHeight);
+        float t = Mathf.Clamp01(player.FootHeight / maxHeight);
 
         sky.SetColor(SkyTintId, skyTint.Evaluate(t));
         sky.SetColor(GroundColorId, groundColor.Evaluate(t));

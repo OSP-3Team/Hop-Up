@@ -21,6 +21,9 @@ namespace Project.UI
         [SerializeField, Tooltip("새로하기·이어하기를 눌렀을 때 불러올 씬 이름. Build Profiles의 Scene List에 있어야 함")]
         private string gameSceneName = "Sandbox_Inventory";
 
+        [SerializeField, Tooltip("새로하기를 눌렀을 때 먼저 불러올 오프닝 씬 이름. 오프닝이 끝나면 게임 씬으로 넘어감. Build Profiles의 Scene List에 있어야 함")]
+        private string openingSceneName = "Opening";
+
         [SerializeField, Tooltip("저장 파일 이름. 8.2(세이브)와 맞춰야 함")]
         private string saveFileName = "save.json";
 
@@ -79,8 +82,9 @@ namespace Project.UI
         private void StartGame(StartMode mode)
         {
             GameStartRequest.Mode = mode;
-            Debug.Log($"[MainMenu] {mode} 시작 → {gameSceneName}");
-            SceneManager.LoadScene(gameSceneName); // 오프닝은 게임 씬의 OpeningSequence가 GameStartRequest를 보고 재생
+            string scene = GameStartRequest.ShouldPlayOpening ? openingSceneName : gameSceneName;
+            Debug.Log($"[MainMenu] {mode} 시작 → {scene}");
+            SceneManager.LoadScene(scene);
         }
 
         private void OnSettingsClicked()
