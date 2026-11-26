@@ -459,6 +459,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5387538321062996237, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1651671715}
+    - targetCorrespondingSourceObject: {fileID: 5387538321062996237, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1651671723}
   m_SourcePrefab: {fileID: 100100000, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
 --- !u!4 &162013325 stripped
 Transform:
@@ -3815,6 +3818,26 @@ MonoBehaviour:
   reach: 6
   logResult: 1
   useLeftClick: 0
+  looking: {fileID: 0}
+  player: {fileID: 0}
+  uiMode: 0
+--- !u!114 &1651671723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1651671713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7f0d94d530f72945bf6e90b93723608, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HopUp.FarmEconomy.FarmPlantingInteractor
+  viewCamera: {fileID: 0}
+  seedItemId: seed_normal
+  reach: 6
+  logResult: 1
+  useLeftClick: 1
 --- !u!1001 &1655573230
 PrefabInstance:
   m_ObjectHideFlags: 0
