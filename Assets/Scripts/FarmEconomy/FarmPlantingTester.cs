@@ -22,6 +22,7 @@ namespace HopUp.FarmEconomy
         MaterialPropertyBlock block;
         int selected;
         string message = "";
+        bool panelOpen = true;
 
         void Start()
         {
@@ -67,6 +68,14 @@ namespace HopUp.FarmEconomy
 
         void OnGUI()
         {
+            // F1 키로 패널 열기/닫기 (IMGUI 이벤트라서 새 Input System만 켜져 있어도 동작한다)
+            Event e = Event.current;
+            if (e.type == EventType.KeyDown && e.keyCode == KeyCode.F1)
+            {
+                panelOpen = !panelOpen;
+                e.Use();
+            }
+
             EconomyHub hub = EconomyHub.Instance;
             if (hub == null)
             {
@@ -74,7 +83,14 @@ namespace HopUp.FarmEconomy
                 return;
             }
 
-            GUILayout.BeginArea(new Rect(10, 10, 380, 560), GUI.skin.box);
+            if (!panelOpen)
+            {
+                if (GUI.Button(new Rect(10, 10, 170, 28), "농장 패널 열기 (F1)")) panelOpen = true;
+                return;
+            }
+
+            GUILayout.BeginArea(new Rect(10, 10, 380, 590), GUI.skin.box);
+            if (GUILayout.Button("패널 닫기 (F1)")) panelOpen = false;
             GUILayout.Label("농장 시험 패널 (임시)");
             GUILayout.Label("코인 " + hub.Wallet.Coins + " / 당근 " + hub.Carrots.Total
                             + " / 씨앗 " + hub.Inventory.CountOf(seedItemId) + " / 지대 단계 " + hub.Zone.Stage);

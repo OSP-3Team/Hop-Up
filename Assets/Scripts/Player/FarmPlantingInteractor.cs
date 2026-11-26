@@ -18,8 +18,8 @@ namespace HopUp.FarmEconomy
         [SerializeField] float reach = 6f;
         [SerializeField] bool logResult = true;
 
-        [Tooltip("켜면 좌클릭으로도 심기/수확 (발판 설치와 겹치므로 기본은 꺼 둠)")]
-        [SerializeField] bool useLeftClick = false;
+        [Tooltip("켜면 좌클릭으로도 심기/수확 (원래 방식). 발판 설치와 겹치면 끄고 R 키만 쓰면 됨")]
+        [SerializeField] bool useLeftClick = true;
 
         FarmPlot looking;   // 지금 조준점이 가리키는 밭
         PlayerController player;
@@ -116,7 +116,7 @@ namespace HopUp.FarmEconomy
                       uiMode ? "[Tab] 커서 풀림 - 패널 클릭 가능" : "[Tab] 커서 풀기");
             if (looking == null) return;
             GUI.Label(new Rect(Screen.width * 0.5f - 80f, Screen.height * 0.5f + 20f, 260f, 24f),
-                      "밭 #" + looking.PlotIndex + "  [R 심기/수확, F 물주기]");
+                      "밭 #" + looking.PlotIndex + "  [좌클릭 또는 R: 심기/수확, F: 물주기]");
         }
     }
 }
