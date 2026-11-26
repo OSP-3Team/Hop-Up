@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,6 +15,10 @@ using UnityEngine.InputSystem;
 ///   - 손에 발판을 들고 있을 때만 설치 기능(미리보기 포함)이 켜지고
 ///   - 설치에 성공했을 때 발판 1개를 소모합니다. (설치가 안 되면 소모하지 않음)
 ///
+/// [종류별 발판] Platform Kinds 목록에 "아이템 id → 발판 프리팹"을 적어 두면,
+///   손에 든 발판 아이템의 id에 맞는 프리팹(크기)으로 미리보기와 설치가 됩니다.
+///   목록에 없는 id이거나 인벤토리 없이 설치할 때는 Platform Prefab(기본)을 사용합니다.
+///
 /// [카메라] Camera Pivot 칸을 비워 두면 Player 안의 카메라를 자동으로 사용합니다.
 /// [디버그] Debug Placement를 켜면 설치 불가(빨강) 이유를 Console에 알려줍니다.
 ///
@@ -21,10 +27,26 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerController))]
 public class PlatformPlacer : MonoBehaviour
 {
+    // [종류별 발판] 아이템 id와 발판 프리팹을 짝지은 한 줄
+    [Serializable]
+    public class PlatformKind
+    {
+        [Tooltip("발판 아이템의 id (예: scaffold_1)")]
+        public string itemId;
+        [Tooltip("이 종류로 설치될 발판 프리팹")]
+        public GameObject prefab;
+    }
+
+    private const string DefaultKindId = "default";
+
     [Header("참조")]
-    [SerializeField] private GameObject platformPrefab;  // Prefabs 폴더의 Platform
+    [SerializeField, Tooltip("기본 발판 프리팹 (Prefabs 폴더의 Platform). 종류 목록에 없을 때, 또는 인벤토리 없이 설치할 때 사용")]
+    private GameObject platformPrefab;
     [SerializeField, Tooltip("눈 위치·시선 기준 오브젝트. 비워 두면 Player 안의 카메라를 자동으로 사용")]
     private Transform cameraPivot;
+
+    [Header("발판 종류 (아이템 id → 프리팹)")]
+    [SerializeField] private List<PlatformKind> platformKinds = new List<PlatformKind>();
 
     [Header("인벤토리 연동")]
     [SerializeField, Tooltip("켜면 항상 인벤토리 기준. 꺼져 있어도 씬에 인벤토리(PlatformInventoryBridge)가 있으면 자동으로 인벤토리 기준")]
@@ -46,10 +68,20 @@ public class PlatformPlacer : MonoBehaviour
     [SerializeField, Tooltip("설치 불가 이유가 바뀔 때마다 Console에 출력 (확인이 끝나면 끄기)")]
     private bool debugPlacement = true;
 
+    /// <summary>발판을 설치했을 때 발생 (인자: 발판 종류 id, 설치 위치). 플레이 로그(8.1)가 사용</summary>
+    public event Action<string, Vector3> PlatformPlaced;
+
+    // 발판 프리팹 하나당 미리보기 하나 (종류가 바뀌면 해당 미리보기만 보임)
+    private class PreviewInfo
+    {
+        public GameObject go;
+        public Renderer[] renderers;
+        public Vector3 halfExtents;
+    }
+
     private PlayerController player;
-    private GameObject preview;
-    private Renderer[] previewRenderers;
-    private Vector3 halfExtents;
+    private readonly Dictionary<GameObject, PreviewInfo> previews = new Dictionary<GameObject, PreviewInfo>();
+    private readonly HashSet<string> warnedKinds = new HashSet<string>();
 
     private PlacedPlatform selected;   // null이 아니면 "발판 선택 모드"
 
@@ -75,23 +107,77 @@ public class PlatformPlacer : MonoBehaviour
                 Debug.LogError("[PlatformPlacer] Player 안에서 카메라를 찾지 못했습니다. Camera Pivot 칸에 Main Camera를 연결해 주세요.");
         }
 
-        CreatePreview();
+        if (platformPrefab == null)
+            Debug.LogError("[PlatformPlacer] Platform Prefab 칸이 비어 있습니다. Prefabs 폴더의 Platform을 연결해 주세요.");
+        else
+            GetPreview(platformPrefab);   // 기본 발판 미리보기를 미리 만들어 둠
     }
 
-    private void CreatePreview()
+    // 종류 id에 맞는 프리팹 찾기. 없으면 기본 프리팹
+    private GameObject ResolvePrefab(string kindId)
     {
-        preview = Instantiate(platformPrefab);
-        preview.name = "PlatformPreview";
+        if (!string.IsNullOrEmpty(kindId) && kindId != DefaultKindId)
+        {
+            foreach (PlatformKind kind in platformKinds)
+            {
+                if (kind != null && kind.itemId == kindId && kind.prefab != null)
+                    return kind.prefab;
+            }
+
+            if (warnedKinds.Add(kindId))
+                Debug.LogWarning("[PlatformPlacer] Platform Kinds 목록에 '" + kindId + "'이(가) 없어서 기본 발판으로 설치합니다.");
+        }
+
+        return platformPrefab;
+    }
+
+    private PreviewInfo GetPreview(GameObject prefab)
+    {
+        if (previews.TryGetValue(prefab, out PreviewInfo existing))
+            return existing;
+
+        GameObject go = Instantiate(prefab);
+        go.name = "PlatformPreview_" + prefab.name;
 
         // 발판 크기(절반)를 BoxCollider에서 계산 — 겹침 검사에 사용
-        BoxCollider box = preview.GetComponent<BoxCollider>();
-        halfExtents = Vector3.Scale(box.size, preview.transform.lossyScale) * 0.5f;
+        Vector3 half = Vector3.one * 0.5f;
+        BoxCollider box = go.GetComponent<BoxCollider>();
+        if (box != null)
+            half = Vector3.Scale(box.size, go.transform.lossyScale) * 0.5f;
+        else
+            Debug.LogError("[PlatformPlacer] 발판 프리팹 '" + prefab.name + "'에 Box Collider가 없습니다.");
 
         // 미리보기는 밟히거나 부딪히면 안 되니 Collider를 모두 끔
-        foreach (Collider c in preview.GetComponentsInChildren<Collider>())
+        foreach (Collider c in go.GetComponentsInChildren<Collider>())
             c.enabled = false;
 
-        previewRenderers = preview.GetComponentsInChildren<Renderer>();
+        go.SetActive(false);
+
+        var info = new PreviewInfo
+        {
+            go = go,
+            renderers = go.GetComponentsInChildren<Renderer>(),
+            halfExtents = half
+        };
+        previews.Add(prefab, info);
+        return info;
+    }
+
+    private void HideAllPreviews()
+    {
+        foreach (PreviewInfo p in previews.Values)
+        {
+            if (p.go.activeSelf) p.go.SetActive(false);
+        }
+    }
+
+    private void ShowOnly(PreviewInfo target)
+    {
+        foreach (PreviewInfo p in previews.Values)
+        {
+            bool on = p == target;
+            if (p.go.activeSelf != on) p.go.SetActive(on);
+        }
     }
 
     private void Update()
@@ -99,7 +185,7 @@ public class PlatformPlacer : MonoBehaviour
         // 메뉴·창이 열려 있거나(InputEnabled == false), 낙하 중(ActionInputEnabled == false)이면 입력 무시, 미리보기 숨김
         if (!player.InputEnabled || !player.ActionInputEnabled)   // [3.4]
         {
-            preview.SetActive(false);
+            HideAllPreviews();
             return;
         }
 
@@ -113,7 +199,7 @@ public class PlatformPlacer : MonoBehaviour
         // ── 선택 모드: 좌클릭 = 파괴 (설치는 하지 않음) ──
         if (selected != null)
         {
-            preview.SetActive(false);
+            HideAllPreviews();
             if (mouse.leftButton.wasPressedThisFrame)
                 HandleLeftClickInSelectMode();
             return;
@@ -127,6 +213,10 @@ public class PlatformPlacer : MonoBehaviour
 
     private void HandlePlacement(Mouse mouse)
     {
+        if (platformPrefab == null) return;
+
+        string kindId = DefaultKindId;   // [종류별 발판] 이번에 설치할 발판 종류
+
         // 인벤토리 연동: 손에 발판이 없으면 설치 기능 자체를 끔 (미리보기도 숨김)
         if (UseInventoryNow)
         {
@@ -140,27 +230,31 @@ public class PlatformPlacer : MonoBehaviour
 
             if (inv == null || !inv.IsHoldingPlatform)
             {
-                preview.SetActive(false);
+                HideAllPreviews();
                 return;
             }
+
+            kindId = inv.HeldPlatformId;   // 소모하기 전에 종류를 기억해 둠
         }
+
+        PreviewInfo preview = GetPreview(ResolvePrefab(kindId));
+        ShowOnly(preview);
 
         // 에임 위치: 카메라 정면(조준선) 방향으로 placeDistance만큼 앞
         Vector3 eye = cameraPivot.position;
         Vector3 pos = eye + cameraPivot.forward * placeDistance;
         Quaternion rot = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);  // 항상 수평
 
-        preview.SetActive(true);
-        preview.transform.SetPositionAndRotation(pos, rot);
+        preview.go.transform.SetPositionAndRotation(pos, rot);
 
         // 1) 다른 물체와 겹치는가? (내 몸은 제외)
-        bool overlapping = FindOverlap(pos, rot, out string overlapName);
+        bool overlapping = FindOverlap(pos, rot, preview.halfExtents, out string overlapName);
 
         // 2) 카메라에서 발판 중심까지 가는 길이 막혀 있는가? (바닥·벽 너머 설치 방지, 내 몸은 제외)
         bool blocked = FindBlocker(eye, pos, out string blockName);
 
         bool canPlace = !overlapping && !blocked;
-        SetPreviewColor(canPlace ? validColor : invalidColor);
+        SetPreviewColor(preview, canPlace ? validColor : invalidColor);
 
         if (debugPlacement)
         {
@@ -171,6 +265,7 @@ public class PlatformPlacer : MonoBehaviour
             if (reason != lastReason)
             {
                 Debug.Log("[발판] " + reason
+                          + " | 종류 " + kindId
                           + " | 카메라 높이 " + eye.y.ToString("F2")
                           + " | 발판 높이 " + pos.y.ToString("F2"));
                 lastReason = reason;
@@ -183,9 +278,27 @@ public class PlatformPlacer : MonoBehaviour
             if (UseInventoryNow && !PlatformInventoryLocator.Current.TryConsumeHeldPlatform())
                 return;
 
-            GameObject placed = Instantiate(platformPrefab, pos, rot);
-            placed.AddComponent<PlacedPlatform>();   // "설치된 발판" 표식 (파괴·선택에 사용)
+            SpawnPlatform(kindId, pos, rot);
+            PlatformPlaced?.Invoke(kindId, pos);
         }
+    }
+
+    /// <summary>
+    /// 설치된 발판을 만든다. (설치할 때와 세이브 불러올 때 같이 사용 — 인벤토리는 건드리지 않음)
+    /// </summary>
+    public PlacedPlatform SpawnPlatform(string kindId, Vector3 position, Quaternion rotation)
+    {
+        GameObject prefab = ResolvePrefab(kindId);
+        if (prefab == null) return null;
+
+        GameObject placed = Instantiate(prefab, position, rotation);
+
+        PlacedPlatform marker = placed.GetComponent<PlacedPlatform>();
+        if (marker == null)
+            marker = placed.AddComponent<PlacedPlatform>();   // "설치된 발판" 표식 (파괴·선택·저장에 사용)
+
+        marker.SetKind(string.IsNullOrEmpty(kindId) ? DefaultKindId : kindId);
+        return marker;
     }
 
     // Player 안의 콜라이더(내 몸)는 검사에서 제외
@@ -194,7 +307,7 @@ public class PlatformPlacer : MonoBehaviour
         return c.transform.IsChildOf(transform);
     }
 
-    private bool FindOverlap(Vector3 pos, Quaternion rot, out string culprit)
+    private bool FindOverlap(Vector3 pos, Quaternion rot, Vector3 halfExtents, out string culprit)
     {
         // 크기를 5% 줄여서 "딱 붙어 있는" 경우는 허용
         int count = Physics.OverlapBoxNonAlloc(
@@ -339,9 +452,9 @@ public class PlatformPlacer : MonoBehaviour
         return platform;
     }
 
-    private void SetPreviewColor(Color color)
+    private void SetPreviewColor(PreviewInfo preview, Color color)
     {
-        foreach (Renderer r in previewRenderers)
+        foreach (Renderer r in preview.renderers)
             r.material.color = color;
     }
 }

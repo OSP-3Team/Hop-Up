@@ -35,6 +35,16 @@ namespace Project.Inventory
             }
         }
 
+        // [종류별 발판] 손에 든 발판의 id (발판이 아니면 빈 문자열)
+        public string HeldPlatformId
+        {
+            get
+            {
+                if (!IsHoldingPlatform) return string.Empty;
+                return hotbar.HeldItem.id ?? string.Empty;
+            }
+        }
+
         // 손에 든 칸에서 발판 1개 소모. 0개가 되면 InventoryManager가 칸을 비워서 빈손이 됨
         public bool TryConsumeHeldPlatform()
         {
