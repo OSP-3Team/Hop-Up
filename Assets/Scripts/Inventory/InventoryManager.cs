@@ -133,34 +133,6 @@ namespace Project.Inventory
             return true;
         }
 
-        // [8.2 세이브] 불러오기용: 칸 수와 칸 내용을 저장된 상태로 한 번에 되돌린다.
-        // items, counts는 칸 번호 순서. 비어 있거나 모르는 아이템은 빈 칸이 된다.
-        public void RestoreSlots(int slotCount, ItemData[] items, int[] counts)
-        {
-            int target = Mathf.Clamp(slotCount, 1, MaxSlotCount);
-
-            while (slots.Count < target) slots.Add(new InventorySlot());
-            while (slots.Count > target) slots.RemoveAt(slots.Count - 1);
-
-            for (int i = 0; i < slots.Count; i++)
-            {
-                ItemData item = (items != null && i < items.Length) ? items[i] : null;
-                int count = (counts != null && i < counts.Length) ? counts[i] : 0;
-
-                if (item == null || count <= 0)
-                {
-                    slots[i].Clear();
-                }
-                else
-                {
-                    slots[i].item = item;
-                    slots[i].count = count;
-                }
-            }
-
-            OnInventoryChanged?.Invoke();
-        }
-
         // ---- IInventory 구현: FarmEconomy가 문자열 아이템 id로 접근하는 통로 ----
 
         public int MaxSlots => MaxSlotCount;

@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using HopUp.FarmEconomy;
 
 /// <summary>
 /// WBS 3.4 추락 판정 및 페널티 (SYS-01)
@@ -12,19 +11,16 @@ using HopUp.FarmEconomy;
 ///              (시점·이동·숫자 키는 막지 않음.) 착지하면 풀립니다.
 ///
 /// [페널티]     착지한 낙하 거리가 Penalty Distance(10m) 이상이고, 착지한 곳이 "설치한 발판"이면
-///              - 낙하 방지 효과가 있으면: 발판 유지, 효과 1회 소모 (EconomyHub의 요리 시스템 CookingService 사용)
+///              - 낙하 방지 효과가 있으면: 발판 유지, 효과 1회 소모
 ///              - 없으면: 그 발판 1개 파괴 + 새 낙하를 0m부터 시작 (입력 막기는 유지)
 ///              땅·정거장 바닥 등 설치 발판이 아닌 곳에 착지하면 아무 일도 없습니다.
 ///
-/// [높이 도달]  접지 0.1초 유지 후
+/// [높이 도달 신호]  접지 0.1초 유지 후
 ///              - 발 높이 >= Ending Height(300m)이면 EndingReached를 1회
-///              - 아니면 EconomyHub의 지대 단계(ZoneProgress)에 발 높이를 알림 (처음 도달한 지대만 해금됨)
-///              (농장 바닥이 Y=0이라는 가정)
+///              - 아니면 Milestone Heights(75·150·225m) 중 아직 안 보낸 것을 낮은 것부터 전부 MilestoneReached(높이)로 1회씩
+///              해금·엔딩 화면은 담당자가 이 신호를 받아서 연결합니다. (농장 바닥이 Y=0이라는 가정)
 ///
-/// [날기 모드]  PlayerController의 Fly Mode가 켜져 있는 동안은 낙하 계산을 멈추고,
-///              끄는 순간의 높이부터 새 낙하로 계산합니다.
-///
-/// Player 오브젝트에 PlayerController와 함께 붙입니다.
+/// Player 오브젝트에 PlayerController, PlayerBuffs와 함께 붙입니다.
 /// </summary>
 [RequireComponent(typeof(PlayerController))]
 public class FallController : MonoBehaviour
@@ -37,51 +33,31 @@ public class FallController : MonoBehaviour
     [SerializeField, Tooltip("낙하 거리가 이 이상이고 설치한 발판에 착지하면 그 발판이 파괴됨")]
     private float penaltyDistance = 10f;
 
-    [Header("높이 도달")]
+    [Header("높이 도달 신호")]
+    [SerializeField, Tooltip("처음 도달하면 MilestoneReached 신호를 보낼 높이들 (낮은 것부터 순서대로 적기)")]
+    private float[] milestoneHeights = { 75f, 150f, 225f };
     [SerializeField, Tooltip("이 높이 이상에서 접지하면 EndingReached 신호")]
     private float endingHeight = 300f;
     [SerializeField, Tooltip("높이 판정 전에 접지를 유지해야 하는 시간(초)")]
     private float groundedHoldTime = 0.1f;
-    [SerializeField, Tooltip("EconomyHub가 없는 씬(테스트 씬)에서만 쓰는 지대 높이. EconomyHub가 있으면 그쪽 설정 값을 씁니다")]
-    private float[] fallbackZoneHeights = { 75f, 150f, 225f };
 
     [Header("디버그")]
     [SerializeField, Tooltip("Console에 [낙하] 로그 출력 (확인이 끝나면 끄기)")]
     private bool debugLog = true;
 
+    /// <summary>75·150·225m 같은 지대 높이에 처음 접지했을 때 (인자: 그 지대의 높이)</summary>
+    public event Action<float> MilestoneReached;
+
     /// <summary>엔딩 높이에 접지했을 때 (1회)</summary>
     public event Action EndingReached;
 
-    // 높이 바(HeightBar)·세이브(SaveManager)가 읽어 가는 값
+    // 높이 바(HeightBar)가 읽어 가는 값
     public float EndingHeight => endingHeight;
-
-    /// <summary>낙하 입력 막기가 켜져 있는 동안 true (세이브 보류 판단에 사용)</summary>
-    public bool IsFalling => gateOn;
-
-    /// <summary>지대 높이들(75·150·225). EconomyHub가 있으면 그쪽 설정을, 없으면 Inspector 값을 사용</summary>
-    public float[] ZoneHeights
-    {
-        get
-        {
-            EconomyHub hub = EconomyHub.Instance;
-            if (hub != null)
-            {
-                try
-                {
-                    float[] heights = hub.Config.zones.stationHeights;
-                    if (heights != null && heights.Length > 0) return heights;
-                }
-                catch (Exception)
-                {
-                    // 설정을 못 읽으면 아래 기본값 사용
-                }
-            }
-            return fallbackZoneHeights;
-        }
-    }
+    public float[] MilestoneHeights => milestoneHeights;
 
     private PlayerController player;
     private PlatformPlacer placer;
+    private PlayerBuffs buffs;
 
     private bool initialized;
     private bool wasGrounded;
@@ -90,11 +66,18 @@ public class FallController : MonoBehaviour
     private bool gateOn;             // 낙하 입력 막기 중인가
 
     private bool endingFired;
+    private bool[] milestoneFired;
 
     private void Awake()
     {
         player = GetComponent<PlayerController>();
         placer = GetComponent<PlatformPlacer>();
+        buffs = GetComponent<PlayerBuffs>();
+
+        if (buffs == null)
+            Debug.LogWarning("[FallController] Player에 PlayerBuffs가 없어서 낙하 방지 효과는 사용되지 않습니다.");
+
+        milestoneFired = new bool[milestoneHeights.Length];
     }
 
     private void OnDisable()
@@ -105,13 +88,6 @@ public class FallController : MonoBehaviour
             gateOn = false;
             player.ActionInputEnabled = true;
         }
-    }
-
-    /// <summary>세이브를 불러와 위치가 바뀐 뒤에 호출: 낙하 기록을 처음부터 다시 시작</summary>
-    public void ResetTracking()
-    {
-        initialized = false;
-        EndGate();
     }
 
     // PlayerController.Update(접지 판정·이동)가 끝난 뒤에 실행
@@ -126,20 +102,6 @@ public class FallController : MonoBehaviour
             wasGrounded = grounded;
             lastGroundedFoot = foot;
             apexHeight = foot;
-        }
-
-        // 날기 모드: 낙하 계산을 멈추고 매 프레임 지금 높이를 정점으로 삼음
-        // → 날기를 끄면 그 높이에서 새 낙하로 계산됨
-        if (player.IsFlying)
-        {
-            EndGate();
-            apexHeight = foot;
-            lastGroundedFoot = foot;
-            wasGrounded = grounded;
-
-            if (grounded)
-                CheckHeightReached(foot);
-            return;
         }
 
         if (grounded)
@@ -177,13 +139,10 @@ public class FallController : MonoBehaviour
 
         if (fallDistance >= penaltyDistance && platform != null)
         {
-            EconomyHub hub = EconomyHub.Instance;
-            bool protectedByFood = hub != null && hub.Cooking != null && hub.Cooking.TryConsumeFallProtection();
-
-            if (protectedByFood)
+            if (buffs != null && buffs.TryConsumeFallProtection())
             {
                 Log("착지 " + fallDistance.ToString("F1") + "m 낙하 → 낙하 방지 효과 사용, 발판 유지 (남은 횟수 "
-                    + hub.Cooking.FallProtectionCharges + ")");
+                    + buffs.FallProtectionCharges + ")");
                 EndGate();
             }
             else
@@ -228,7 +187,7 @@ public class FallController : MonoBehaviour
         Log("입력 막기 해제");
     }
 
-    // ───────────────────────── 높이 도달 ─────────────────────────
+    // ───────────────────────── 높이 도달 신호 ─────────────────────────
 
     private void CheckHeightReached(float foot)
     {
@@ -243,10 +202,14 @@ public class FallController : MonoBehaviour
             return;
         }
 
-        // 지대 단계 알림: 처음 도달한 단계만 해금되고, 한 번 오른 단계는 내려가지 않음
-        EconomyHub hub = EconomyHub.Instance;
-        if (hub != null && hub.Zone != null && hub.Zone.NotifyHeight(foot))
-            Log("지대 해금 → " + hub.Zone.Stage + "단계 (발 높이 " + foot.ToString("F1") + "m)");
+        for (int i = 0; i < milestoneHeights.Length; i++)
+        {
+            if (milestoneFired[i] || foot < milestoneHeights[i]) continue;
+
+            milestoneFired[i] = true;
+            Log("지대 도달 " + milestoneHeights[i].ToString("F0") + "m → MilestoneReached");
+            MilestoneReached?.Invoke(milestoneHeights[i]);
+        }
     }
 
     private void Log(string message)

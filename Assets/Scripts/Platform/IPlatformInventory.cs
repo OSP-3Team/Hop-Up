@@ -13,9 +13,6 @@ public interface IPlatformInventory
     /// <summary>지금 손에 든 칸(선택된 칸)의 아이템이 발판인가?</summary>
     bool IsHoldingPlatform { get; }
 
-    /// <summary>손에 든 발판 아이템의 id (예: scaffold_1). 발판이 아니면 빈 문자열.  [종류별 발판]</summary>
-    string HeldPlatformId { get; }
-
     /// <summary>
     /// 손에 든 발판 1개를 소모한다. 성공하면 true, 실패(발판이 아님·수량 0)하면 false.
     /// 수량이 0이 되면 칸을 비우고 빈손으로 만드는 처리는 인벤토리 쪽에서 한다.

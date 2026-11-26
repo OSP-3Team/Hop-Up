@@ -1367,6 +1367,7 @@ GameObject:
   - component: {fileID: 4402056289579811835}
   - component: {fileID: 2127202712685915584}
   - component: {fileID: 7763957703991224272}
+  - component: {fileID: 2643362872443580495}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1437,8 +1438,6 @@ MonoBehaviour:
   jumpHeight: 1.5
   gravity: -20
   airControl: 1
-  flyMode: 0
-  flyVerticalSpeed: 6
   groundCheckRadius: 0.2
   groundCheckDistance: 0.2
   mouseSensitivity: 0.1
@@ -1457,14 +1456,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlatformPlacer
   platformPrefab: {fileID: 7004609225833489017, guid: 8048cfc739536be4b9231b1bbf7fc2bd, type: 3}
   cameraPivot: {fileID: 3084769470409354505}
-  platformKinds:
-  - itemId: scaffold_1
-    prefab: {fileID: 7004609225833489017, guid: 8048cfc739536be4b9231b1bbf7fc2bd, type: 3}
-  - itemId: scaffold_2
-    prefab: {fileID: 7004609225833489017, guid: 678e2d57e066be844b7feed19de2224b, type: 3}
-  - itemId: scaffold_3
-    prefab: {fileID: 7004609225833489017, guid: 63d38e99da2882a448271f38f044bce4, type: 3}
-  useInventory: 1
+  useInventory: 0
   placeDistance: 2.5
   selectDistance: 2.5
   selectAimRadius: 0.15
@@ -1501,13 +1493,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FallController
   inputGateDistance: 2
   penaltyDistance: 10
-  endingHeight: 300
-  groundedHoldTime: 0.1
-  fallbackZoneHeights:
+  milestoneHeights:
   - 75
   - 150
   - 225
+  endingHeight: 300
+  groundedHoldTime: 0.1
   debugLog: 1
+--- !u!114 &2643362872443580495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5387538321062996237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5623ccdb96e05954ca43335598216042, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerBuffs
+  fallProtectionCharges: 0
 --- !u!1 &5514398917171035608
 GameObject:
   m_ObjectHideFlags: 0

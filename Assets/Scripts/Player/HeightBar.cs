@@ -7,7 +7,7 @@ using UnityEngine.UI;
 ///
 /// - 플레이어의 실제 발 높이(FootHeight)를 0m ~ 엔딩 높이(300m)로 환산해 세로 바를 실시간으로 채움
 /// - 현재 높이 숫자(예: 120m)를 표시
-/// - 75·150·225m 지대 구분선을 자동으로 그림 (EconomyHub의 지대 높이 설정을 사용, 없으면 FallController의 Fallback Zone Heights)
+/// - 75·150·225m 지대 구분선을 자동으로 그림 (FallController의 Milestone Heights 값을 그대로 사용)
 /// - 맨 위(300m)에 달 아이콘 배치
 ///
 /// 사용법: Canvas 안의 "HeightBar"(바 전체 배경 Image) 오브젝트에 붙입니다.
@@ -76,10 +76,10 @@ public class HeightBar : MonoBehaviour
     private void TryFindReferences()
     {
         if (player == null)
-            player = FindFirstObjectByType<PlayerController>();
+            player = FindAnyObjectByType<PlayerController>();
 
         if (fallController == null)
-            fallController = FindFirstObjectByType<FallController>();
+            fallController = FindAnyObjectByType<FallController>();
     }
 
     private void UpdateFill(float ratio)
@@ -123,7 +123,7 @@ public class HeightBar : MonoBehaviour
 
         float maxHeight = Mathf.Max(0.01f, fallController.EndingHeight);
 
-        foreach (float h in fallController.ZoneHeights)
+        foreach (float h in fallController.MilestoneHeights)
         {
             float ratio = Mathf.Clamp01(h / maxHeight);
 
