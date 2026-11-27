@@ -11,9 +11,18 @@ namespace Project.Inventory
         private Transform holdPoint;
 
         [SerializeField] private float placeholderSize = 0.2f;
+        [SerializeField, Tooltip("아이템을 들면 숨길 손 뼈 (예: RightHand). 비우면 손을 숨기지 않는다")]
+        private Transform handBone;
+
+        private Vector3 handOriginalScale = Vector3.one;
 
         private ItemData shownItem;
         private GameObject shownObject;
+
+        private void Awake()
+        {
+            if (handBone != null) handOriginalScale = handBone.localScale;
+        }
 
         private void OnEnable()
         {
@@ -27,6 +36,13 @@ namespace Project.Inventory
             hotbar.OnSelectionChanged -= OnSelectionChanged;
             inventory.OnInventoryChanged -= Refresh;
             Clear();
+        }
+
+        // 애니메이션이 뼈를 움직인 뒤에 크기를 덮어써야 하므로 LateUpdate에서 처리
+        private void LateUpdate()
+        {
+            if (handBone == null) return;
+            handBone.localScale = shownItem != null ? Vector3.one * 0.0001f : handOriginalScale;
         }
 
         private void OnSelectionChanged(int index)
