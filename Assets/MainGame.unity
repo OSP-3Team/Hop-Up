@@ -184,6 +184,10 @@ PrefabInstance:
       value: Rock_3_Q_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -399,6 +403,10 @@ PrefabInstance:
       value: Bush_2_B_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: aca24a36d4c6a5548a4e895a49534b69, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: aca24a36d4c6a5548a4e895a49534b69, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -421,7 +429,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 74520746}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Checkpoint_Plane2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -459,7 +467,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 78779138}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: MapDecor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -710,6 +718,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
       propertyPath: m_Name
       value: Grass_2_C_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -1263,6 +1275,10 @@ PrefabInstance:
       value: Rock_3_G_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 13d569758b9804d409e98a5367a0d7d8, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 13d569758b9804d409e98a5367a0d7d8, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -1341,6 +1357,10 @@ PrefabInstance:
       value: Tree_2_B_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 73b595843b137714481d695e507e7473, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 73b595843b137714481d695e507e7473, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -1362,18 +1382,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2127202712685915584, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-      propertyPath: positionInView.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2127202712685915584, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-      propertyPath: rotationOffset.x
-      value: -7
-      objectReference: {fileID: 0}
-    - target: {fileID: 2127202712685915584, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-      propertyPath: rotationOffset.y
-      value: 20
-      objectReference: {fileID: 0}
     - target: {fileID: 2693931474553527760, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.73608
@@ -1414,44 +1422,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3084769470409354505, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.245
-      objectReference: {fileID: 0}
-    - target: {fileID: 4266063044125064770, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4402056289579811835, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-      propertyPath: useInventory
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5387538321062996237, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 2693931474553527760, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-      insertIndex: 0
-      addedObject: {fileID: 1125317021}
-    - targetCorrespondingSourceObject: {fileID: 3084769470409354505, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 252632032}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5387538321062996237, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1651671715}
-    - targetCorrespondingSourceObject: {fileID: 5387538321062996237, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1651671723}
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
---- !u!4 &162013325 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3084769470409354505, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-  m_PrefabInstance: {fileID: 162013324}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &162013326 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2693931474553527760, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
@@ -1462,7 +1441,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2127202712685915584, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
   m_PrefabInstance: {fileID: 162013324}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1651671713}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0449d26d22668449b3bb1feb647415b, type: 3}
@@ -1473,7 +1452,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4402056289579811835, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
   m_PrefabInstance: {fileID: 162013324}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1651671713}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6c7b24e48056724bb523aad9654050e, type: 3}
@@ -1484,7 +1463,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7585466275276210886, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
   m_PrefabInstance: {fileID: 162013324}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1651671713}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 87cfb2ce4b02cb2478181a955c2893b7, type: 3}
@@ -1676,6 +1655,10 @@ PrefabInstance:
       value: Rock_3_N_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4ad496557475ae443b4add0d1beccc37, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4ad496557475ae443b4add0d1beccc37, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -1752,6 +1735,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 99570cee49ef1ef49b9fec8be04cd5f5, type: 3}
       propertyPath: m_Name
       value: Silo
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 99570cee49ef1ef49b9fec8be04cd5f5, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 99570cee49ef1ef49b9fec8be04cd5f5, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -1862,6 +1849,10 @@ PrefabInstance:
       value: Grass_1_C_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -1884,7 +1875,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 217340834}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Checkpoint_Plane4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1913,37 +1904,11 @@ Transform:
   - {fileID: 560413806}
   m_Father: {fileID: 78779138}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &252632031
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 252632032}
-  m_Layer: 0
-  m_Name: HoldPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &252632032
+--- !u!4 &252632032 stripped
 Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 8780631801620857504, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
+  m_PrefabInstance: {fileID: 162013324}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 252632031}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4, y: -0.3, z: 0.6}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 162013325}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &275872043
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2007,6 +1972,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_Name
       value: Rock_3_R_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -2083,6 +2052,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -3900264975997497713, guid: ec709356222671044aa9074769ed3f20, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -3900264975997497713, guid: ec709356222671044aa9074769ed3f20, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -2091,16 +2064,32 @@ PrefabInstance:
       value: SmallBarn
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ec709356222671044aa9074769ed3f20, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ec709356222671044aa9074769ed3f20, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1949267151923071911, guid: ec709356222671044aa9074769ed3f20, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1949267151923071911, guid: ec709356222671044aa9074769ed3f20, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2200954050048525142, guid: ec709356222671044aa9074769ed3f20, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200954050048525142, guid: ec709356222671044aa9074769ed3f20, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936106482449141914, guid: ec709356222671044aa9074769ed3f20, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6936106482449141914, guid: ec709356222671044aa9074769ed3f20, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -2245,7 +2234,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 282011966}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Underside
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2821,6 +2810,10 @@ PrefabInstance:
       value: Rock_3_O_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 558e076249577ae41a552285252b1fb9, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 558e076249577ae41a552285252b1fb9, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -2843,7 +2836,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 366120694}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Checkpoint_Plane3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2935,6 +2928,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
       propertyPath: m_Name
       value: Grass_1_B_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -3545,6 +3542,10 @@ PrefabInstance:
       value: Rock_3_Q_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -3760,6 +3761,10 @@ PrefabInstance:
       value: Rock_3_Q_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -3838,6 +3843,10 @@ PrefabInstance:
       value: Rock_3_Q_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -3914,6 +3923,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ac9fec3801bd9164aa3ac64005c74df4, type: 3}
       propertyPath: m_Name
       value: Bush_2_C_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ac9fec3801bd9164aa3ac64005c74df4, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ac9fec3801bd9164aa3ac64005c74df4, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4072,6 +4085,10 @@ PrefabInstance:
       value: Tree_4_A_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1b220b3fd9f68f24f9aca77724c46142, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1b220b3fd9f68f24f9aca77724c46142, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -4136,6 +4153,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_Name
       value: Grass_1_C_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4214,6 +4235,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: c49b41ddc9f10f64891de88e32584598, type: 3}
       propertyPath: m_Name
       value: Rock_2_E_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c49b41ddc9f10f64891de88e32584598, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c49b41ddc9f10f64891de88e32584598, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4322,6 +4347,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: aca24a36d4c6a5548a4e895a49534b69, type: 3}
       propertyPath: m_Name
       value: Bush_2_B_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: aca24a36d4c6a5548a4e895a49534b69, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: aca24a36d4c6a5548a4e895a49534b69, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4464,6 +4493,10 @@ PrefabInstance:
       value: Tree_3_A_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4cbe7bbb5db39dd478ea1e2e653a919d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cbe7bbb5db39dd478ea1e2e653a919d, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -4528,6 +4561,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
       propertyPath: m_Name
       value: Grass_2_C_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4719,6 +4756,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 13d569758b9804d409e98a5367a0d7d8, type: 3}
       propertyPath: m_Name
       value: Rock_3_G_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 13d569758b9804d409e98a5367a0d7d8, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 13d569758b9804d409e98a5367a0d7d8, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -5051,6 +5092,10 @@ PrefabInstance:
       value: Rock_3_R_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -5129,6 +5174,10 @@ PrefabInstance:
       value: Rock_3_O_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 558e076249577ae41a552285252b1fb9, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 558e076249577ae41a552285252b1fb9, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -5193,6 +5242,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 83288ea3aafa5f647815e6c49546d735, type: 3}
       propertyPath: m_Name
       value: Fence2
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 83288ea3aafa5f647815e6c49546d735, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 83288ea3aafa5f647815e6c49546d735, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -5273,6 +5326,10 @@ PrefabInstance:
       value: Rock_1_B_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9e9e8563878e8f04cae0f82358eb143f, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9e9e8563878e8f04cae0f82358eb143f, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -5351,6 +5408,10 @@ PrefabInstance:
       value: Grass_1_C_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -5427,6 +5488,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: f4ef34c4120d5d64d84cb26374b7630e, type: 3}
       propertyPath: m_Name
       value: Bush_4_B_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f4ef34c4120d5d64d84cb26374b7630e, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f4ef34c4120d5d64d84cb26374b7630e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -5642,6 +5707,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_Name
       value: CoreRock
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -6006,6 +6075,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_Name
       value: Grass_1_C_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -6438,6 +6511,10 @@ PrefabInstance:
       value: Grass_2_C_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -6612,6 +6689,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7017700c3c3bf0945a8453ab553a75fe, type: 3}
       propertyPath: m_Name
       value: Rock_1_J_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7017700c3c3bf0945a8453ab553a75fe, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7017700c3c3bf0945a8453ab553a75fe, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -6857,6 +6938,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 13d569758b9804d409e98a5367a0d7d8, type: 3}
       propertyPath: m_Name
       value: Rock_3_G_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 13d569758b9804d409e98a5367a0d7d8, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 13d569758b9804d409e98a5367a0d7d8, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -7254,6 +7339,10 @@ PrefabInstance:
       value: Tree_3_B_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ddd5a06f6d259f84c9e7246dfbc267da, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ddd5a06f6d259f84c9e7246dfbc267da, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -7330,6 +7419,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_Name
       value: Grass_1_C_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -7475,7 +7568,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1044922839}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Nature
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7643,7 +7736,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1072481741}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Buildings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7742,6 +7835,10 @@ PrefabInstance:
       value: Grass_2_C_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -7818,6 +7915,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 4ad496557475ae443b4add0d1beccc37, type: 3}
       propertyPath: m_Name
       value: Rock_3_N_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4ad496557475ae443b4add0d1beccc37, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4ad496557475ae443b4add0d1beccc37, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -7954,72 +8055,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1115170740}
   m_CullTransparentMesh: 1
---- !u!1001 &1125317020
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 162013326}
-    m_Modifications:
-    - target: {fileID: 4832528469960488391, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_Name
-      value: Bunny (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213839774993133437, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213839774993133437, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213839774993133437, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213839774993133437, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213839774993133437, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213839774993133437, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213839774993133437, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213839774993133437, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213839774993133437, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213839774993133437, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8503062697702582570, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
---- !u!4 &1125317021 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5213839774993133437, guid: 4f68ca18e7d94f70896787a0fe3544c3, type: 3}
-  m_PrefabInstance: {fileID: 1125317020}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1145944867
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8083,6 +8118,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 5b1f73af9637b82419d50062ce019b36, type: 3}
       propertyPath: m_Name
       value: Rock_1_C_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5b1f73af9637b82419d50062ce019b36, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5b1f73af9637b82419d50062ce019b36, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -8163,6 +8202,10 @@ PrefabInstance:
       value: Rock_3_R_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -8239,6 +8282,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
       propertyPath: m_Name
       value: Grass_1_B_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -8394,6 +8441,10 @@ PrefabInstance:
       value: Tree_3_A_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4cbe7bbb5db39dd478ea1e2e653a919d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cbe7bbb5db39dd478ea1e2e653a919d, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -8470,6 +8521,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_Name
       value: CoreRock
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -8550,6 +8605,10 @@ PrefabInstance:
       value: Grass_1_B_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -8614,6 +8673,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_Name
       value: Grass_1_C_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -8777,6 +8840,10 @@ PrefabInstance:
       value: Grass_2_C_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -8853,6 +8920,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 8a8d1e3cf2e5d4d46a9f3d7e5ef34411, type: 3}
       propertyPath: m_Name
       value: Grass_2_B_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8a8d1e3cf2e5d4d46a9f3d7e5ef34411, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8a8d1e3cf2e5d4d46a9f3d7e5ef34411, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -8933,6 +9004,10 @@ PrefabInstance:
       value: Rock_1_B_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9e9e8563878e8f04cae0f82358eb143f, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9e9e8563878e8f04cae0f82358eb143f, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -9011,6 +9086,10 @@ PrefabInstance:
       value: Grass_1_C_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -9087,6 +9166,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_Name
       value: CoreRock
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -9262,6 +9345,10 @@ PrefabInstance:
       value: WaterTower
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3a7be40181f9b474789b6b00562f7651, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3a7be40181f9b474789b6b00562f7651, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -9370,6 +9457,10 @@ PrefabInstance:
       value: Tree_3_A_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4cbe7bbb5db39dd478ea1e2e653a919d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4cbe7bbb5db39dd478ea1e2e653a919d, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -9434,6 +9525,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 83288ea3aafa5f647815e6c49546d735, type: 3}
       propertyPath: m_Name
       value: Fence2
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 83288ea3aafa5f647815e6c49546d735, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 83288ea3aafa5f647815e6c49546d735, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -9567,6 +9662,10 @@ PrefabInstance:
       value: Tree_2_A_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a13c66ae05be5bf4d8e82fd3e2f46b4f, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a13c66ae05be5bf4d8e82fd3e2f46b4f, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -9643,6 +9742,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
       propertyPath: m_Name
       value: Rock_3_Q_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -10072,6 +10175,10 @@ PrefabInstance:
       value: Bush_4_B_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f4ef34c4120d5d64d84cb26374b7630e, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f4ef34c4120d5d64d84cb26374b7630e, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -10148,6 +10255,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_Name
       value: Rock_3_R_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -10276,40 +10387,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1651671713 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5387538321062996237, guid: af2a7a6239f8d6940a886ac4a876b2d0, type: 3}
-  m_PrefabInstance: {fileID: 162013324}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1651671715
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1651671713}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95a8b8c7d4a78f84980deb437be1339a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HopUp.FarmEconomy.FarmPlantingInteractor
---- !u!114 &1651671723
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1651671713}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6c851b8081555c40beed094db325815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HopUp.FarmEconomy.FarmPlantingInteractor
-  viewCamera: {fileID: 0}
-  seedItemId: seed_normal
-  reach: 6
-  logResult: 1
-  useLeftClick: 1
 --- !u!1001 &1655573230
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10559,6 +10636,10 @@ PrefabInstance:
       value: CoreRock
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1014d27aa7c8474abe8c27cc4a0ed57, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -10635,6 +10716,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7481b869430a89841990f879ef78a5c3, type: 3}
       propertyPath: m_Name
       value: Tree_4_B_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7481b869430a89841990f879ef78a5c3, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7481b869430a89841990f879ef78a5c3, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -10715,6 +10800,10 @@ PrefabInstance:
       value: Rock_3_Q_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -10791,6 +10880,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
       propertyPath: m_Name
       value: Grass_2_C_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b98cc265bc2df6c4d805487f096288d9, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -11190,6 +11283,10 @@ PrefabInstance:
       value: Rock_1_C_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5b1f73af9637b82419d50062ce019b36, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5b1f73af9637b82419d50062ce019b36, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -11569,6 +11666,10 @@ PrefabInstance:
       value: Rock_3_O_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 558e076249577ae41a552285252b1fb9, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 558e076249577ae41a552285252b1fb9, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -11645,6 +11746,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 1a40ecd5d61d0bc49a5dbfe8680f02f7, type: 3}
       propertyPath: m_Name
       value: ChickenCoop
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1a40ecd5d61d0bc49a5dbfe8680f02f7, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1a40ecd5d61d0bc49a5dbfe8680f02f7, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -11753,6 +11858,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
       propertyPath: m_Name
       value: Grass_1_B_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -11896,6 +12005,10 @@ PrefabInstance:
       value: Bush_2_B_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: aca24a36d4c6a5548a4e895a49534b69, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: aca24a36d4c6a5548a4e895a49534b69, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -11972,6 +12085,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
       propertyPath: m_Name
       value: Grass_1_B_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a751d7a0f3661494190b46297988ef65, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -12126,6 +12243,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 9e9e8563878e8f04cae0f82358eb143f, type: 3}
       propertyPath: m_Name
       value: Rock_1_B_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9e9e8563878e8f04cae0f82358eb143f, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9e9e8563878e8f04cae0f82358eb143f, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -12380,12 +12501,24 @@ PrefabInstance:
       value: TowerWindmill
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a6c32263c5aa2cb4d9c01016113f8806, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a6c32263c5aa2cb4d9c01016113f8806, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6650831899426361058, guid: a6c32263c5aa2cb4d9c01016113f8806, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6650831899426361058, guid: a6c32263c5aa2cb4d9c01016113f8806, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8539456379820279464, guid: a6c32263c5aa2cb4d9c01016113f8806, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8539456379820279464, guid: a6c32263c5aa2cb4d9c01016113f8806, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -12524,6 +12657,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e324d5e5a9cf31845bfae9295bac0f5b, type: 3}
       propertyPath: m_Name
       value: Well
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e324d5e5a9cf31845bfae9295bac0f5b, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e324d5e5a9cf31845bfae9295bac0f5b, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -12772,6 +12909,10 @@ PrefabInstance:
       value: Rock_3_Q_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -12836,6 +12977,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 940346e86fdd6d64aa17c8832abceb77, type: 3}
       propertyPath: m_Name
       value: Fence
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 940346e86fdd6d64aa17c8832abceb77, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 940346e86fdd6d64aa17c8832abceb77, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -13021,6 +13166,10 @@ PrefabInstance:
       value: Fence
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 940346e86fdd6d64aa17c8832abceb77, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 940346e86fdd6d64aa17c8832abceb77, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -13099,6 +13248,10 @@ PrefabInstance:
       value: Tree_4_A_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1b220b3fd9f68f24f9aca77724c46142, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1b220b3fd9f68f24f9aca77724c46142, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -13175,6 +13328,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 8a8d1e3cf2e5d4d46a9f3d7e5ef34411, type: 3}
       propertyPath: m_Name
       value: Grass_2_B_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8a8d1e3cf2e5d4d46a9f3d7e5ef34411, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8a8d1e3cf2e5d4d46a9f3d7e5ef34411, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -13504,6 +13661,10 @@ PrefabInstance:
       value: Rock_3_Q_Color1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eaa2fcdffbbaf4940bd37ba40bc32be5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4
       objectReference: {fileID: 0}
@@ -13580,6 +13741,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: aca24a36d4c6a5548a4e895a49534b69, type: 3}
       propertyPath: m_Name
       value: Bush_2_B_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: aca24a36d4c6a5548a4e895a49534b69, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: aca24a36d4c6a5548a4e895a49534b69, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -13845,6 +14010,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_Name
       value: Grass_1_C_Color1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ab61311f1bd04ef46a2f16323baf165a, type: 3}
       propertyPath: m_StaticEditorFlags
