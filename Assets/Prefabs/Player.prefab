@@ -87,6 +87,8 @@ MonoBehaviour:
   flyVerticalSpeed: 30
   groundCheckRadius: 0.2
   groundCheckDistance: 0.2
+  footstepInterval: 0.3
+  sfxVolume: 0.6
   mouseSensitivity: 0.1
   maxLookAngle: 85
 --- !u!114 &4402056289579811835
@@ -219,7 +221,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.4
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -305,7 +307,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0501184d0130faa4e896109904906e9e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.098170914
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0501184d0130faa4e896109904906e9e, type: 3}
       propertyPath: m_LocalPosition.z
