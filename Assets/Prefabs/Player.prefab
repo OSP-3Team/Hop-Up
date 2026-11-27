@@ -133,7 +133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonArm
   cameraPivot: {fileID: 0}
   arm: {fileID: 6091614314441035935}
-  positionInView: {x: 0.3, y: -0.2, z: 0.08}
+  positionInView: {x: 0.1, y: -0.4, z: 0.08}
   rotationOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &7763957703991224272
 MonoBehaviour:
