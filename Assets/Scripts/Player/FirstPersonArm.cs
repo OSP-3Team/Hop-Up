@@ -1,18 +1,18 @@
 using UnityEngine;
 
 /// <summary>
-/// 토끼의 오른팔(RightArm 뼈)을 카메라에 붙여서,
+/// 토끼의 오른팔(UpperArm.R 뼈)을 카메라에 붙여서,
 /// 시점을 위아래로 돌려도 손과 손에 든 아이템이 항상 같은 화면 위치에 보이게 합니다.
 ///
-/// 사용법: Player 오브젝트에 붙이기만 하면 됩니다. (카메라와 RightArm 뼈는 자동으로 찾음)
-/// 손에 든 아이템(HoldPoint)은 RightHand 뼈 아래에 있으니 팔을 따라 같이 움직입니다.
+/// 사용법: Player 오브젝트에 붙이기만 하면 됩니다. (카메라와 UpperArm.R 뼈는 자동으로 찾음)
+/// 손에 든 아이템은 카메라 아래 HoldPoint에 붙고, 아이템을 들면 HeldItemView가 아래팔(LowerArm.R)을 숨깁니다.
 /// 위치·각도는 Inspector에서 ▶ 실행 중에 바꿔 보면서 맞추세요.
 /// </summary>
 public class FirstPersonArm : MonoBehaviour
 {
     [Header("참조 (비워 두면 자동으로 찾음)")]
     [SerializeField] private Transform cameraPivot;   // 카메라(CameraPivot)
-    [SerializeField] private Transform arm;           // 오른쪽 윗팔 뼈(RightArm)
+    [SerializeField] private Transform arm;           // 오른쪽 윗팔 뼈(UpperArm.R)
 
     [Header("화면에서의 팔 위치")]
     [SerializeField, Tooltip("카메라 기준 윗팔 뿌리 위치 (오른쪽, 위, 앞). 팔은 여기서 정면으로 뻗어 나갑니다")]
@@ -36,7 +36,7 @@ public class FirstPersonArm : MonoBehaviour
         {
             foreach (Transform t in GetComponentsInChildren<Transform>(true))
             {
-                if (t.name == "RightArm")
+                if (t.name == "UpperArm.R")
                 {
                     arm = t;
                     break;
@@ -46,7 +46,7 @@ public class FirstPersonArm : MonoBehaviour
 
         if (cameraPivot == null || arm == null)
         {
-            Debug.LogError("[FirstPersonArm] 카메라 또는 RightArm 뼈를 찾지 못했습니다. Inspector에서 직접 연결해 주세요.");
+            Debug.LogError("[FirstPersonArm] 카메라 또는 UpperArm.R 뼈를 찾지 못했습니다. Inspector에서 직접 연결해 주세요.");
             return;
         }
 

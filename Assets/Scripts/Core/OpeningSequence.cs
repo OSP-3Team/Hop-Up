@@ -228,7 +228,7 @@ namespace Project.Core
             {
                 if (r is not SkinnedMeshRenderer smr) continue; // 손에 든 아이템 등은 대역에 넣지 않음
                 var mesh = new Mesh();
-                smr.BakeMesh(mesh, true); // 크기는 반영, 위치·회전은 아래에서 맞춤
+                smr.BakeMesh(mesh); // 월드 크기로 구워짐, 위치·회전만 아래에서 맞춤 (true로 구우면 렌더러 크기(Quaternius 모델은 100)로 나뉘어 작아짐)
                 var part = new GameObject(smr.name, typeof(MeshFilter), typeof(MeshRenderer));
                 part.transform.SetParent(root, false);
                 part.transform.SetPositionAndRotation(smr.transform.position, smr.transform.rotation);
