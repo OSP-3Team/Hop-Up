@@ -39,6 +39,10 @@ public class PlayerController : MonoBehaviour
     [Header("효과음")]
     [SerializeField, Tooltip("걸을 때 발소리 간격(초)")]
     private float footstepInterval = 0.3f;
+    [SerializeField, Tooltip("이 시간(초)보다 오래 공중에 있다가 땅에 닿아야 착지음 재생 (작은 턱 오르내림 무시)")]
+    private float minAirTimeForLandSound = 0.2f;
+    [SerializeField, Range(0f, 1f), Tooltip("착지 소리 크기 (발소리는 Sfx Volume)")]
+    private float landVolume = 1f;
     [SerializeField, Range(0f, 1f)] private float sfxVolume = 0.6f;
 
     [Header("시점")]
@@ -66,6 +70,7 @@ public class PlayerController : MonoBehaviour
     private float xRotation;
 
     private bool wasGrounded;
+    private float airTime;
     private float footstepTimer;
     private AudioSource footstepSource;
 
@@ -86,6 +91,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         CheckGround();
+        PlayLandSound();
 
         if (InputEnabled)
             Look();
@@ -94,8 +100,17 @@ public class PlayerController : MonoBehaviour
     }
 
     // =========================================
-    // 효과음 (발소리)
+    // 효과음 (착지·발소리)
     // =========================================
+
+    private void PlayLandSound()
+    {
+        if (IsGrounded && !wasGrounded && !flyMode && airTime >= minAirTimeForLandSound)
+            Sfx.Play("Land", transform.position, landVolume);
+
+        airTime = IsGrounded ? 0f : airTime + Time.deltaTime;
+        wasGrounded = IsGrounded;
+    }
 
     private void UpdateFootsteps()
     {
@@ -186,6 +201,7 @@ public class PlayerController : MonoBehaviour
 
         verticalVelocity = 0f;
         GroundedTime = 0f;
+        airTime = 0f;   // 순간이동은 착지음 없이
     }
 
     // =========================================
