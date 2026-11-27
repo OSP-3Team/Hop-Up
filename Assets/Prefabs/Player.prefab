@@ -1438,7 +1438,7 @@ MonoBehaviour:
   gravity: -20
   airControl: 1
   flyMode: 0
-  flyVerticalSpeed: 6
+  flyVerticalSpeed: 30
   groundCheckRadius: 0.2
   groundCheckDistance: 0.2
   mouseSensitivity: 0.1
