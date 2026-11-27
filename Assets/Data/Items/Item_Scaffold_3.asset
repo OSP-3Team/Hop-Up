@@ -15,6 +15,6 @@ MonoBehaviour:
   id: scaffold_3
   displayName: "\uCCA0 \uBC1C\uD310"
   icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  heldPrefab: {fileID: 0}
+  heldPrefab: {fileID: 406475566677544567, guid: 206bef3e91e6cbb46ac2d4a0e700306e, type: 3}
   category: 0
   maxStack: 10
