@@ -13,6 +13,12 @@
 | [Farm Buildings](https://quaternius.com/packs/farmbuildings.html) | Quaternius | CC0 1.0 | `Assets/ThirdParty/Quaternius_FarmBuildings` |
 | [Bunny](https://poly.pizza/m/irZjWFARyl) (Ultimate Monsters Bundle) | Quaternius | CC0 1.0 | `Assets/ThirdParty/Quaternius_Bunny` |
 
+### 사운드
+
+| 에셋 | 제작자 | 라이선스 | 위치 |
+|---|---|---|---|
+| [Impact Sounds](https://kenney.nl/assets/impact-sounds) | Kenney | CC0 1.0 ([전문](Assets/Audio/Kenney_ImpactSounds_License.txt)) | `Assets/Audio/Resources/SFX` |
+
 CC0 에셋은 출처 표기 의무가 없지만, 감사의 뜻으로 적어 둡니다.
 
 ### 폰트

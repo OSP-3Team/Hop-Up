@@ -36,6 +36,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float groundCheckRadius = 0.1f;
     [SerializeField] private float groundCheckDistance = 0.08f;
 
+    [Header("효과음")]
+    [SerializeField, Tooltip("걸을 때 발소리 간격(초)")]
+    private float footstepInterval = 0.3f;
+    [SerializeField, Range(0f, 1f)] private float sfxVolume = 0.6f;
+
     [Header("시점")]
     [SerializeField] private float mouseSensitivity = 0.1f;
     [SerializeField] private float maxLookAngle = 85f;
@@ -61,10 +66,15 @@ public class PlayerController : MonoBehaviour
     private float xRotation;
 
     private bool wasGrounded;
+    private float footstepTimer;
+    private AudioSource footstepSource;
 
     private void Awake()
     {
         cc = GetComponent<CharacterController>();
+
+        footstepSource = gameObject.AddComponent<AudioSource>();
+        footstepSource.playOnAwake = false;   // 2D(spatialBlend 0): 내 발소리라 위치감 불필요
     }
 
     private void Start()
@@ -81,6 +91,38 @@ public class PlayerController : MonoBehaviour
             Look();
 
         Move();
+    }
+
+    // =========================================
+    // 효과음 (발소리)
+    // =========================================
+
+    private void UpdateFootsteps()
+    {
+        // 입력이 아닌 실제 이동으로 판단: 투명 벽에 막혀 제자리걸음일 때는 소리 없음
+        Vector3 v = cc.velocity;
+        bool moving = new Vector2(v.x, v.z).sqrMagnitude > 0.01f;
+
+        if (!IsGrounded || !moving)
+        {
+            footstepTimer = 0f;   // 멈췄다 다시 걸으면 첫 발소리는 바로
+            footstepSource.Stop();   // 클립 끝까지 기다리지 않고 멈추면 바로 끊음
+            return;
+        }
+
+        footstepTimer -= Time.deltaTime;
+        if (footstepTimer > 0f) return;
+        footstepTimer = footstepInterval;
+
+        // 설치한 발판 위면 나무 발소리, 그 외 땅은 FootstepGround
+        bool onPlatform = GroundCollider != null && GroundCollider.GetComponentInParent<PlacedPlatform>() != null;
+        AudioClip clip = Sfx.Pick(onPlatform ? "FootstepWood" : "FootstepGround");
+        if (clip == null) return;
+
+        // 소스 하나로 재생: 새 발소리가 이전 발소리를 대신해서 겹치지 않음
+        footstepSource.clip = clip;
+        footstepSource.volume = sfxVolume;
+        footstepSource.Play();
     }
 
     // =========================================
@@ -238,6 +280,8 @@ public class PlayerController : MonoBehaviour
             IsGrounded = false;
             GroundedTime = 0f;
         }
+
+        UpdateFootsteps();
 
         // 중력 적용
         verticalVelocity += gravity * Time.deltaTime;
