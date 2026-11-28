@@ -9,7 +9,7 @@ namespace Project.Core
     /// <summary>
     /// Ending 씬의 연출 시간표. 조작 없이 보기만 한다. 세이브는 건드리지 않는다(MainGame에서 넘어오기 전에 저장함).
     /// 지구(돌고 있음) → 카메라가 내려와 달 위의 우리 토끼 → 달 토끼 둘이 깡충깡충 다가와 셋이 같이 뜀 → 멀리서 셋과 지구 → THE END → 메인 메뉴.
-    /// 토끼 모델에 애니메이션이 없어서 움직임은 위치·회전으로만 만든다.
+    /// 이동(다가오기·깡충)은 위치·회전으로 만들고, 손 흔들기 같은 제스처만 토끼의 Animator 클립(EndingBunny.controller)으로 재생한다.
     /// 오브젝트 배치와 참조 연결은 Tools > Hop-Up > Setup Ending(EndingSetupMenu)이 해 준다.
     /// 카메라는 장면마다 Cam_* 빈 오브젝트의 위치·회전으로 옮겨 간다(씬 화면에서 그 오브젝트를 옮겨 구도를 고침).
     /// </summary>
@@ -95,6 +95,9 @@ namespace Project.Core
             float walkTime = Mathf.Max(meetDuration * WalkPart, 0.0001f);
             float hopTogether = tMeet + walkTime;
             float walkHops = Mathf.Max(1f, Mathf.Round(walkTime / Mathf.Max(hopPeriod, 0.0001f)));
+            Animator playerAnim = playerBunny.GetComponent<Animator>();
+            Animator[] moonAnims = { moonBunnies[0].GetComponent<Animator>(), moonBunnies[1].GetComponent<Animator>() };
+            bool playerWaved = false, moonWaved = false;
 
             try
             {
@@ -124,6 +127,10 @@ namespace Project.Core
                         pp.y += together ? Hop(t - hopTogether) : 0f;
                         float turn = Mathf.SmoothStep(0f, 1f, (t - tMeet) / TurnTime);
                         playerBunny.SetPositionAndRotation(pp, Quaternion.Slerp(playerFrom, playerTo, turn));
+
+                        // 제스처: 우리 토끼는 다 돌아서면, 달 토끼는 도착하는 순간 손을 흔듦 (끝나면 컨트롤러가 Idle로 돌림)
+                        if (!playerWaved && t >= tMeet + TurnTime) { playerWaved = true; Gesture(playerAnim, "Wave"); }
+                        if (!moonWaved && t >= hopTogether) { moonWaved = true; foreach (Animator a in moonAnims) Gesture(a, "Wave"); }
                     }
 
                     float fadeIn = 1f - t / FadeInTime;
@@ -160,6 +167,12 @@ namespace Project.Core
 
         /// <summary>뛰는 높이: 땅에 닿을 때 0, hopPeriod마다 한 번씩 튕기듯</summary>
         private float Hop(float t) => hopHeight * Mathf.Abs(Mathf.Sin(Mathf.PI * t / hopPeriod));
+
+        /// <summary>Animator가 없는(예전에 만든) 씬이면 아무것도 안 함</summary>
+        private static void Gesture(Animator a, string state)
+        {
+            if (a != null && a.runtimeAnimatorController != null) a.CrossFade(state, 0.15f);
+        }
 
         private static void Place(Transform cam, Transform a, Transform b, float t)
         {
