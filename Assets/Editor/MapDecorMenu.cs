@@ -7,7 +7,7 @@ using UnityEngine;
 /// <summary>
 /// Tools > Hop-Up > Build Map Decor: MainGame을 '떠 있는 하늘섬'으로 꾸민다.
 /// MapDecor 루트를 지우고 다시 만든다(고정 시드라 몇 번 돌려도 같은 결과).
-/// 건물·큰 바위만 콜라이더, 나무·덤불·풀·작은 바위는 통과. 밭·봇·스폰 주변은 비워 둔다. 장식을 바꾸면 Tools/Hop-Up/Bake Bot NavMesh를 다시 실행(봇은 콜라이더를 돌아감).
+/// 건물·큰 바위만 콜라이더, 나무·덤불·풀·작은 바위는 통과. 밭·봇·스폰 주변은 비워 둔다(봇은 장애물 무시 직선 이동).
 /// 배치 실행: Unity -batchmode -projectPath . -executeMethod MapDecorMenu.BuildAndSave -quit
 /// </summary>
 public static class MapDecorMenu

@@ -5,7 +5,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 
 /// <summary>
-/// Tools > Farm Bot Test Scene: 농사 봇 동작 확인용 씬을 만든다(EconomyHub 1, 밭 4칸, 봇 2대, 가로막이 1, NavMesh, 카메라).
+/// Tools > Farm Bot Test Scene: 농사 봇 동작 확인용 씬을 만든다(EconomyHub 1, 밭 4칸, 봇 2대, 카메라).
 /// 플레이 후 봇 인스펙터의 ⋮ 메뉴(Debug: ...)로 보유·씨앗 투입·수확을 시험한다.
 /// </summary>
 public static class FarmBotTestSceneMenu
@@ -23,12 +23,7 @@ public static class FarmBotTestSceneMenu
         if (File.Exists(ScenePath) &&
             !EditorUtility.DisplayDialog("Farm Bot Test Scene", ScenePath + "이(가) 이미 있습니다. 새로 만들까요?", "새로 만들기", "취소"))
             return;
-        BuildAndSave();
-    }
 
-    /// <summary>배치 실행용(확인 창 없이 덮어씀): Unity -batchmode -projectPath . -executeMethod FarmBotTestSceneMenu.BuildAndSave -quit</summary>
-    public static void BuildAndSave()
-    {
         Directory.CreateDirectory(Folder);
         EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
 
@@ -44,7 +39,6 @@ public static class FarmBotTestSceneMenu
         GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
         plane.name = "Ground";
         plane.transform.position = new Vector3((PlotCount - 1) * PlotSpacing * 0.5f, 0f, 1f);
-        plane.transform.localScale = new Vector3(2f, 1f, 2f);  // 20m: 봇이 가로막이 끝을 돌아갈 여유(가장자리는 에이전트 반경만큼 깎임)
         plane.GetComponent<Renderer>().sharedMaterial = ground;
 
         for (int i = 0; i < PlotCount; i++)
@@ -60,15 +54,6 @@ public static class FarmBotTestSceneMenu
             float x = i == 0 ? -2f : (PlotCount - 1) * PlotSpacing + 2f;  // 밭 양쪽 끝에서 출발
             CreateBot(i, new Vector3(x, 1f, 4f), bot, cam.transform.rotation);
         }
-
-        // 봇 출발 줄(z=4)과 밭 줄(z=0) 사이 가로막이: 봇이 끝을 돌아 밭에 가는지 확인용
-        GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        wall.name = "Obstacle";
-        wall.transform.position = new Vector3((PlotCount - 1) * PlotSpacing * 0.5f, 0.5f, 2f);
-        wall.transform.localScale = new Vector3((PlotCount - 1) * PlotSpacing + 2f, 1f, 0.4f);  // 첫 칸-1m ~ 끝 칸+1m: 출발점→가까운 칸 직선을 막음
-        wall.GetComponent<Renderer>().sharedMaterial = soil;
-
-        BotNavMeshMenu.Bake(plane, Folder + "/NavMesh.asset");
 
         EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), ScenePath);
         Debug.Log("[FarmBotTestScene] " + ScenePath + " 생성. 플레이 후 봇 인스펙터 ⋮ 메뉴: 이 봇 보유하기 → 씨앗 넣기 → 밭 전부 다 자라게");

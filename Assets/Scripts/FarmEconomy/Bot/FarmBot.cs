@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace HopUp.FarmEconomy
 {
@@ -9,7 +8,6 @@ namespace HopUp.FarmEconomy
     /// 최대 봇 수(기본 4)만큼 배치하고 botIndex를 0부터 맞춘다. 보유하지 않은 번호의 봇은 visualRoot를 끄고 쉰다.
     /// 상태: 대기 → (예약) → 이동 → 심기/수확 → 대기. 다음 할 일은 대기에서만 고른다.
     /// 플레이어 상호작용 코드는 FindNearest로 봇을 찾고 InsertSeeds/CollectCarrots/Describe만 부르면 된다.
-    /// 이동: 출발 위치에 NavMesh가 있으면 NavMeshAgent로 장애물을 돌아가고(Tools/Hop-Up/Bake Bot NavMesh), 없으면 직선 이동.
     /// </summary>
     public sealed class FarmBot : MonoBehaviour
     {
@@ -35,8 +33,6 @@ namespace HopUp.FarmEconomy
 
         EconomyHub hub;
         BotModel model;
-        NavMeshAgent agent;  // null이면 직선 이동(NavMesh 없는 씬·PlayMode 테스트)
-        NavMeshPath pathBuffer;  // 필드 초기화로 만들면 Unity가 막음(생성자 호출 금지) → SetupAgent에서
         int target = -1;
         bool harvestJob;
         float timer;
@@ -72,28 +68,7 @@ namespace HopUp.FarmEconomy
             hub.Field.PlotChanged += OnPlotChanged;
             hub.Field.LayoutChanged += Recheck;
             hub.Bots.BotChanged += OnBotChanged;
-            SetupAgent();
         }
-
-        // 프리팹·씬마다 붙이지 않도록 런타임에 붙인다. NavMesh 없이 AddComponent하면 에러 로그가 나서 먼저 확인
-        void SetupAgent()
-        {
-            NavMeshHit hit;
-            if (!NavMesh.SamplePosition(transform.position, out hit, 2f, NavMesh.AllAreas)) return;
-            agent = GetComponent<NavMeshAgent>();
-            if (agent == null)
-            {
-                float pivotHeight = transform.position.y - hit.position.y;  // 붙이는 순간 바닥으로 붙으므로 먼저 잰다
-                agent = gameObject.AddComponent<NavMeshAgent>();
-                agent.baseOffset = pivotHeight;  // 피벗 높이 유지(캡슐은 중심이 피벗)
-            }
-            pathBuffer = new NavMeshPath();
-            agent.speed = moveSpeed;
-            agent.stoppingDistance = arriveDistance * 0.5f;  // 도착 판정(remainingDistance <= arriveDistance)보다 안쪽에서 멈추게
-            agent.autoBraking = true;
-        }
-
-        bool AgentReady { get { return agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh; } }
 
         void OnDestroy()
         {
@@ -107,11 +82,9 @@ namespace HopUp.FarmEconomy
         {
             model = hub.Bots.Get(botIndex);  // 구매·불러오기로 보유 여부가 바뀔 수 있음
             if (visualRoot != null && visualRoot.activeSelf != (model != null)) visualRoot.SetActive(model != null);
-            if (model == null && Current != State.Idle) EnterIdle();  // 에이전트를 끄기 전에 경로를 지운다
-            // 보유하지 않은 봇(보이지 않음)이 다른 봇의 회피 대상이 되지 않게 끈다
-            if (agent != null && agent.enabled != (model != null)) agent.enabled = model != null;
             if (model == null)
             {
+                if (Current != State.Idle) EnterIdle();
                 UpdateLabel();
                 return;
             }
@@ -153,8 +126,7 @@ namespace HopUp.FarmEconomy
                 FarmPlot view = FarmPlot.Find(p.Index);
                 if (view == null) continue;
                 float sqr = (view.transform.position - transform.position).sqrMagnitude;
-                // 길이 막힌 칸(발판에 둘러싸임 등)은 건너뛴다. 안 그러면 0.5초마다 예약→포기를 반복함
-                if (sqr < bestSqr && Reachable(view.transform.position)) { bestSqr = sqr; best = p.Index; }
+                if (sqr < bestSqr) { bestSqr = sqr; best = p.Index; }
             }
             if (best < 0) return false;
 
@@ -163,22 +135,7 @@ namespace HopUp.FarmEconomy
             harvestJob = harvest;
             Current = State.Moving;
             timer = 0f;
-            if (AgentReady) agent.SetDestination(NavGoal(FarmPlot.Find(best).transform.position));
             return true;
-        }
-
-        bool Reachable(Vector3 plotPos)
-        {
-            if (!AgentReady) return true;  // 직선 이동은 경로 검사 없음
-            return NavMesh.CalculatePath(agent.nextPosition, NavGoal(plotPos), agent.areaMask, pathBuffer)
-                && pathBuffer.status == NavMeshPathStatus.PathComplete;
-        }
-
-        // 밭 중심이 NavMesh 위에 딱 있지 않을 수 있어(밭 상자 윗면·높이 차) 가장 가까운 NavMesh 점으로 옮긴다
-        Vector3 NavGoal(Vector3 plotPos)
-        {
-            NavMeshHit hit;
-            return NavMesh.SamplePosition(plotPos, out hit, 1f, agent.areaMask) ? hit.position : plotPos;
         }
 
         // 황금 전용 칸·잠긴 칸은 봇 대상이 아니다
@@ -196,21 +153,10 @@ namespace HopUp.FarmEconomy
             FarmPlot view = FarmPlot.Find(target);
             if (view == null || timer > moveTimeout) { EnterIdle(); return; }
 
-            if (AgentReady)
-            {
-                if (agent.pathPending) return;
-                // 가는 중에 발판이 길을 막으면(carving) 경로가 끊긴다 → 포기하고 다음 판단에서 다른 칸을 고름
-                if (agent.pathStatus != NavMeshPathStatus.PathComplete) { EnterIdle(); return; }
-                if (agent.remainingDistance > arriveDistance) return;
-                agent.ResetPath();  // 작업하는 동안 미끄러지지 않게
-            }
-            else
-            {
-                Vector3 goal = view.transform.position;
-                goal.y = transform.position.y;
-                transform.position = Vector3.MoveTowards(transform.position, goal, moveSpeed * Time.deltaTime);
-                if ((goal - transform.position).sqrMagnitude > arriveDistance * arriveDistance) return;
-            }
+            Vector3 goal = view.transform.position;
+            goal.y = transform.position.y;  // shortcut: 평지 직선 이동, 밭에 높낮이·장애물이 생기면 NavMesh로
+            transform.position = Vector3.MoveTowards(transform.position, goal, moveSpeed * Time.deltaTime);
+            if ((goal - transform.position).sqrMagnitude > arriveDistance * arriveDistance) return;
 
             Current = harvestJob ? State.Harvesting : State.Planting;
             timer = 0f;
@@ -242,7 +188,6 @@ namespace HopUp.FarmEconomy
             target = -1;
             Current = State.Idle;
             timer = 0f;
-            if (AgentReady) agent.ResetPath();
         }
 
         void OnPlotChanged(PlotModel changed) { Recheck(); }
