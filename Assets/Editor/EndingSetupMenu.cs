@@ -13,8 +13,8 @@ using UnityEngine.Rendering;
 public static class EndingSetupMenu
 {
     const string ScenePath = "Assets/Scenes/Ending.unity";
-    const string BunnyPrefabPath = "Assets/Stylized cartoon bunny/Prefab/Stylized bunny.prefab";
-    const string BunnyMaterialPath = "Assets/Stylized cartoon bunny/Material/bunny.mat";
+    const string BunnyPrefabPath = "Assets/ThirdParty/Quaternius_Bunny/Bunny.fbx";
+    const string BunnyBodyMaterial = "Bunny_Main"; // 몸통 색 재질. 달 토끼는 이것만 바꿔 칠함(눈·귀 안쪽은 그대로)
     const string MoonMaterialPath = "Assets/Materials/Moon.mat";
     const string EarthTexturePath = "Assets/Textures/EarthSurface.png";
     const string EarthMaterialPath = "Assets/Materials/Earth.mat";
@@ -123,26 +123,28 @@ public static class EndingSetupMenu
         var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         go.name = name;
         go.transform.position = position;
+        Transform carrot = FindBone(go.transform, "Carrot"); // 모델에 딸린 손에 든 당근 소품
+        if (carrot != null) carrot.gameObject.SetActive(false);
         LowerArms(go.transform);
         if (tint != null)
             foreach (Renderer r in go.GetComponentsInChildren<Renderer>())
-                r.sharedMaterials = r.sharedMaterials.Select(_ => tint).ToArray();
+                r.sharedMaterials = r.sharedMaterials.Select(m => m != null && m.name == BunnyBodyMaterial ? tint : m).ToArray();
         return go;
     }
 
     /// <summary>
-    /// 모델이 애니메이션 없이 T자(팔을 옆으로 든) 자세라, 윗팔 뼈를 돌려 팔을 몸 옆으로 내림. 씬에 저장되므로 씬 화면에서도 내린 자세로 보임.
+    /// 모델이 애니메이션 없이 팔을 옆으로 벌린 자세라, 윗팔 뼈를 돌려 팔을 몸 옆으로 내림. 씬에 저장되므로 씬 화면에서도 내린 자세로 보임.
     /// 뼈 축 방향에 상관없게, 윗팔→아래팔 방향을 "아래로, 바깥쪽으로 살짝" 방향으로 돌리는 회전을 월드 기준으로 곱함.
     /// </summary>
     static void LowerArms(Transform bunny)
     {
-        foreach (string side in new[] { "Left", "Right" })
+        foreach (string side in new[] { "L", "R" })
         {
-            Transform arm = FindBone(bunny, side + "Arm");
-            Transform fore = FindBone(bunny, side + "ForeArm");
+            Transform arm = FindBone(bunny, "UpperArm." + side);
+            Transform fore = FindBone(bunny, "LowerArm." + side);
             if (arm == null || fore == null)
             {
-                Debug.LogWarning("[SetupEnding] " + bunny.name + "에서 " + side + "Arm/" + side + "ForeArm 뼈를 못 찾아 팔을 내리지 못했습니다.");
+                Debug.LogWarning("[SetupEnding] " + bunny.name + "에서 UpperArm." + side + "/LowerArm." + side + " 뼈를 못 찾아 팔을 내리지 못했습니다.");
                 continue;
             }
             Vector3 current = (fore.position - arm.position).normalized;
@@ -185,11 +187,11 @@ public static class EndingSetupMenu
         var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
         if (mat == null)
         {
-            var baseMat = AssetDatabase.LoadAssetAtPath<Material>(BunnyMaterialPath);
+            var baseMat = AssetDatabase.LoadAllAssetsAtPath(BunnyPrefabPath).OfType<Material>().FirstOrDefault(m => m.name == BunnyBodyMaterial);
             mat = baseMat != null ? new Material(baseMat) : new Material(Shader.Find("Universal Render Pipeline/Lit"));
             AssetDatabase.CreateAsset(mat, path);
         }
-        mat.color = color; // 토끼 텍스처에 곱해짐
+        mat.color = color; // 몸통 기본색을 이 색으로 바꿈
         EditorUtility.SetDirty(mat);
         return mat;
     }

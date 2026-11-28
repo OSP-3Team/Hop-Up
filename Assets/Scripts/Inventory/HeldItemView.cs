@@ -11,7 +11,7 @@ namespace Project.Inventory
         private Transform holdPoint;
 
         [SerializeField] private float placeholderSize = 0.2f;
-        [SerializeField, Tooltip("아이템을 들면 숨길 손 뼈 (예: RightHand). 비우면 손을 숨기지 않는다")]
+        [SerializeField, Tooltip("아이템을 들면 숨길 손 뼈 (예: LowerArm.R). 비우면 손을 숨기지 않는다")]
         private Transform handBone;
 
         private Vector3 handOriginalScale = Vector3.one;

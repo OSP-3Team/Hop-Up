@@ -61,7 +61,8 @@ public class PlacedPlatform : MonoBehaviour
     /// <summary>발판 파괴</summary>
     public void Break()
     {
-        // TODO: 파괴 이펙트·사운드 추가 (SYS 완성 단계에서)
+        // TODO: 파괴 이펙트 추가 (SYS 완성 단계에서)
+        Sfx.Play("PlatformBreak", transform.position);
         Destroy(gameObject);
     }
 }

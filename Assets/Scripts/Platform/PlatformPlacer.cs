@@ -279,6 +279,7 @@ public class PlatformPlacer : MonoBehaviour
                 return;
 
             SpawnPlatform(kindId, pos, rot);
+            Sfx.Play("PlatformPlace", pos);   // SpawnPlatform이 아닌 여기서: 세이브 불러올 때는 소리 없음
             PlatformPlaced?.Invoke(kindId, pos);
         }
     }
