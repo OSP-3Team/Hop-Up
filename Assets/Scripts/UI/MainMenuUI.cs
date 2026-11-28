@@ -27,6 +27,9 @@ namespace Project.UI
         [SerializeField, Tooltip("테스트용: 저장 파일이 있는 것처럼 취급")]
         private bool debugForceSaveExists;
 
+        [SerializeField, Tooltip("설정 화면이 아직 없을 때 '준비 중' 안내를 띄울 곳")]
+        private MenuToast toast;
+
         // 설정 버튼을 눌렀을 때 발생 (6.8 설정 화면이 받아서 연다)
         public event Action OnSettingsRequested;
 
@@ -80,13 +83,31 @@ namespace Project.UI
         {
             GameStartRequest.Mode = mode;
             Debug.Log($"[MainMenu] {mode} 시작 → {gameSceneName}");
-            SceneManager.LoadScene(gameSceneName); // 오프닝은 게임 씬의 OpeningSequence가 GameStartRequest를 보고 재생
+
+            SetButtonsInteractable(false); // 두 번 눌림 방지
+
+            // 오프닝은 게임 씬의 OpeningSequence가 GameStartRequest를 보고 재생
+            if (ScreenFader.Instance != null)
+                ScreenFader.Instance.FadeOutAndLoad(gameSceneName);
+            else
+                SceneManager.LoadScene(gameSceneName);
+        }
+
+        private void SetButtonsInteractable(bool value)
+        {
+            newGameButton.interactable = value;
+            continueButton.interactable = value && HasSaveFile();
+            settingsButton.interactable = value;
+            quitButton.interactable = value;
         }
 
         private void OnSettingsClicked()
         {
-            OnSettingsRequested?.Invoke();
-            Debug.Log("[MainMenu] 설정 버튼 클릭 (6.8 설정 화면 연결 예정)");
+            // 6.8 설정 화면이 연결되면 그쪽이 열고, 아직 없으면 안내만 띄운다
+            if (OnSettingsRequested != null)
+                OnSettingsRequested.Invoke();
+            else if (toast != null)
+                toast.Show("설정은 준비 중이에요");
         }
 
         private void OnQuitClicked()
