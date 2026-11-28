@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.TestTools;
 
 namespace HopUp.FarmEconomy.Tests
@@ -28,6 +29,8 @@ namespace HopUp.FarmEconomy.Tests
         public void TearDown()
         {
             Time.timeScale = 1f;
+            if (navMesh.valid) navMesh.Remove();  // 다음 테스트는 NavMesh 없이(직선 이동) 돌아야 함
+            navMesh = default;
             // 즉시 파괴: 지연 파괴면 다음 테스트의 EconomyHub가 남은 Instance를 보고 스스로 사라짐
             foreach (GameObject go in spawned) if (go != null) UnityEngine.Object.DestroyImmediate(go);
             spawned.Clear();
@@ -122,6 +125,49 @@ namespace HopUp.FarmEconomy.Tests
             Assert.AreEqual(PlotPhase.Empty, Plot(4).Phase);
             Assert.AreEqual(PlotPhase.Empty, Plot(golden).Phase);
             Assert.AreEqual(1, Enumerable.Range(0, 4).Count(i => Plot(i).Phase == PlotPhase.Growing));
+        }
+
+        [UnityTest]
+        public IEnumerator Bot_WalksAroundWall_ToPlant()
+        {
+            // 바닥(윗면 y=0)과, 출발점→칸0 직선을 막는 가로막이(x -1~7, z 1.8~2.2)
+            Box("Ground", new Vector3(3f, -0.5f, 1f), new Vector3(20f, 1f, 20f));
+            var wall = new Bounds(new Vector3(3f, 0.5f, 2f), new Vector3(8f, 1f, 0.4f));
+            Box("Wall", wall.center, wall.size);
+            Physics.SyncTransforms();  // 방금 만든 콜라이더의 위치·크기를 굽기 전에 반영
+            var sources = new System.Collections.Generic.List<NavMeshBuildSource>();
+            var area = new Bounds(new Vector3(3f, 0f, 1f), new Vector3(22f, 6f, 22f));
+            NavMeshBuilder.CollectSources(area, ~0, NavMeshCollectGeometry.PhysicsColliders, 0, false,
+                new System.Collections.Generic.List<NavMeshBuildMarkup>(), false, sources);
+            NavMeshData data = NavMeshBuilder.BuildNavMeshData(NavMesh.GetSettingsByID(0), sources, area, Vector3.zero, Quaternion.identity);
+            navMesh = NavMesh.AddNavMeshData(data);
+
+            FarmBot bot = SpawnBot(0, new Vector3(0.5f, 1f, 4f));  // 칸0까지 직선은 z=2에서 x=0.25 → 벽 안
+            yield return null;
+            Assert.IsNotNull(bot.GetComponent<NavMeshAgent>(), "NavMesh 위면 에이전트로 움직여야 함");
+            hub.Inventory.TryAdd("seed_normal", 1);
+            bot.InsertSeeds("seed_normal", 1);
+
+            float end = Time.realtimeSinceStartup + 30f;
+            while (Plot(0).Phase != PlotPhase.Growing && Time.realtimeSinceStartup < end)
+            {
+                Vector3 p = bot.transform.position;
+                Assert.IsFalse(p.x > wall.min.x && p.x < wall.max.x && p.z > wall.min.z && p.z < wall.max.z, "벽을 뚫고 지나감: " + p);
+                yield return null;
+            }
+            Assert.AreEqual(PlotPhase.Growing, Plot(0).Phase, "벽을 돌아 칸0에 심어야 함");
+        }
+
+        NavMeshDataInstance navMesh;
+
+        GameObject Box(string name, Vector3 pos, Vector3 size)
+        {
+            GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            spawned.Add(go);
+            go.name = name;
+            go.transform.position = pos;
+            go.transform.localScale = size;
+            return go;
         }
     }
 }
