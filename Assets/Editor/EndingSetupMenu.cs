@@ -1,6 +1,7 @@
 using System.Linq;
 using Project.Core;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -15,6 +16,7 @@ public static class EndingSetupMenu
     const string ScenePath = "Assets/Scenes/Ending.unity";
     const string BunnyPrefabPath = "Assets/ThirdParty/Quaternius_Bunny/Bunny.fbx";
     const string BunnyBodyMaterial = "Bunny_Main"; // 몸통 색 재질. 달 토끼는 이것만 바꿔 칠함(눈·귀 안쪽은 그대로)
+    const string BunnyControllerPath = "Assets/Animations/EndingBunny.controller";
     const string MoonMaterialPath = "Assets/Materials/Moon.mat";
     const string EarthTexturePath = "Assets/Textures/EarthSurface.png";
     const string EarthMaterialPath = "Assets/Materials/Earth.mat";
@@ -33,6 +35,7 @@ public static class EndingSetupMenu
     public static void BuildFromMenu()
     {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+        SetIdleLoop(); // 재임포트가 일어날 수 있으니 프리팹을 불러오기 전에
         var bunnyPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BunnyPrefabPath);
         var moonMat = AssetDatabase.LoadAssetAtPath<Material>(MoonMaterialPath);
         if (bunnyPrefab == null || moonMat == null)
@@ -66,12 +69,13 @@ public static class EndingSetupMenu
         GameObject earth = Sphere("Earth", EarthPosition, EarthDiameter, LoadOrCreateEarthMaterial());
         earth.transform.rotation = Quaternion.Euler(23.5f, 0f, 0f); // 자전축 기울기. EndingCutscene이 이 축으로 돌림
 
-        GameObject player = Bunny(bunnyPrefab, "PlayerBunny", PlayerBunnyPosition, null);
+        AnimatorController bunnyController = CreateController();
+        GameObject player = Bunny(bunnyPrefab, "PlayerBunny", PlayerBunnyPosition, null, bunnyController);
         Face(player.transform, EarthPosition);
         var moonBunnies = new Transform[2];
         for (int i = 0; i < 2; i++)
         {
-            GameObject b = Bunny(bunnyPrefab, "MoonBunny_" + (i + 1), MoonBunnyPositions[i], LoadOrCreateTint(MoonBunnyNames[i], MoonBunnyColors[i]));
+            GameObject b = Bunny(bunnyPrefab, "MoonBunny_" + (i + 1), MoonBunnyPositions[i], LoadOrCreateTint(MoonBunnyNames[i], MoonBunnyColors[i]), bunnyController);
             Face(b.transform, PlayerBunnyPosition);
             moonBunnies[i] = b.transform;
         }
@@ -118,14 +122,16 @@ public static class EndingSetupMenu
         return go;
     }
 
-    static GameObject Bunny(GameObject prefab, string name, Vector3 position, Material tint)
+    static GameObject Bunny(GameObject prefab, string name, Vector3 position, Material tint, AnimatorController controller)
     {
         var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         go.name = name;
         go.transform.position = position;
         Transform carrot = FindBone(go.transform, "Carrot"); // 모델에 딸린 손에 든 당근 소품
         if (carrot != null) carrot.gameObject.SetActive(false);
-        LowerArms(go.transform);
+        LowerArms(go.transform); // 실행 중엔 Idle이 팔을 덮어쓰지만 씬 화면에서 보이는 자세는 이것
+        if (!go.TryGetComponent(out Animator animator)) animator = go.AddComponent<Animator>();
+        animator.runtimeAnimatorController = controller;
         if (tint != null)
             foreach (Renderer r in go.GetComponentsInChildren<Renderer>())
                 r.sharedMaterials = r.sharedMaterials.Select(m => m != null && m.name == BunnyBodyMaterial ? tint : m).ToArray();
@@ -155,6 +161,61 @@ public static class EndingSetupMenu
     }
 
     const float ArmSpread = 0.2f; // 내린 팔이 바깥으로 벌어지는 정도 (0 = 똑바로 아래, 0.2 ≈ 11°)
+
+    /// <summary>FBX의 Idle 클립만 반복 재생되게 임포트 설정을 바꿈. 이미 그렇게 돼 있으면 재임포트하지 않음</summary>
+    static void SetIdleLoop()
+    {
+        var importer = (ModelImporter)AssetImporter.GetAtPath(BunnyPrefabPath);
+        if (importer == null) return; // 프리팹 없음 오류는 BuildFromMenu가 알림
+        ModelImporterClipAnimation[] clips = importer.clipAnimations.Length > 0 ? importer.clipAnimations : importer.defaultClipAnimations;
+        bool changed = false;
+        foreach (ModelImporterClipAnimation c in clips)
+        {
+            if (!c.name.EndsWith("|Idle") || c.loopTime) continue;
+            c.loopTime = true;
+            changed = true;
+        }
+        if (!changed) return;
+        importer.clipAnimations = clips;
+        importer.SaveAndReimport();
+    }
+
+    /// <summary>
+    /// 엔딩 토끼용 컨트롤러를 새로 만듦(씬처럼 매번 다시 만듦). FBX의 클립마다 같은 이름의 상태(| 뒤 이름: Idle, Wave …), 기본은 Idle.
+    /// 반복하지 않는 클립은 끝나면 Idle로 돌아감. EndingCutscene이 CrossFade로 상태 이름을 부름
+    /// </summary>
+    static AnimatorController CreateController()
+    {
+        if (!AssetDatabase.IsValidFolder("Assets/Animations")) AssetDatabase.CreateFolder("Assets", "Animations");
+        AssetDatabase.DeleteAsset(BunnyControllerPath);
+        var controller = AnimatorController.CreateAnimatorControllerAtPath(BunnyControllerPath);
+        AnimatorStateMachine sm = controller.layers[0].stateMachine;
+
+        AnimationClip[] clips = AssetDatabase.LoadAllAssetsAtPath(BunnyPrefabPath).OfType<AnimationClip>()
+            .Where(c => !c.name.StartsWith("__preview__")).ToArray();
+        AnimationClip idleClip = clips.FirstOrDefault(c => c.name.EndsWith("|Idle"));
+        if (idleClip == null)
+        {
+            Debug.LogWarning("[SetupEnding] Bunny.fbx에서 Idle 클립을 못 찾아 토끼가 애니메이션 없이 서 있습니다.");
+            return controller;
+        }
+
+        AnimatorState idle = sm.AddState("Idle");
+        idle.motion = idleClip;
+        sm.defaultState = idle;
+        foreach (AnimationClip clip in clips)
+        {
+            if (clip == idleClip) continue;
+            AnimatorState state = sm.AddState(clip.name.Substring(clip.name.LastIndexOf('|') + 1));
+            state.motion = clip;
+            if (clip.isLooping) continue;
+            AnimatorStateTransition back = state.AddTransition(idle);
+            back.hasExitTime = true;
+            back.exitTime = 0.9f;
+            back.duration = 0.15f;
+        }
+        return controller;
+    }
 
     static Transform FindBone(Transform root, string name) =>
         root.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == name);
